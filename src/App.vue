@@ -2,9 +2,7 @@
   <div id="app">
     <Header />
     <div class="main">
-      <transition name="fade">
-        <router-view />
-      </transition>
+      <router-view />
     </div>
     <Footer />
   </div>
@@ -71,7 +69,8 @@ a {
   .main {
     position: relative;
     width: 100%;
-    min-height: calc(100% - 105px);
+    // min-height: calc(100% - 105px);
+    height: calc(100% - 105px);
     padding-top: 67px;
   }
 }

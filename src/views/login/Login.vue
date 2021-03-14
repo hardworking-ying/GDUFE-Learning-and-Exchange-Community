@@ -65,10 +65,10 @@ export default {
           required: true,
           message: "请输入邮箱",
           trigger: "blur"
-        // }, {
-        //   type: "email",
-        //   message: "请输入正确的邮箱地址",
-        //   trigger: ["blur", "change"]
+        }, {
+          type: "email",
+          message: "请输入正确的邮箱地址",
+          trigger: "blur"
         }],
         password: [{
           required: "true",
@@ -77,7 +77,7 @@ export default {
         }],
         checkCode: [{
           required: "true",
-          message: "请输入密码",
+          message: "请输入验证码",
           trigger: "blur"
         }]
       }

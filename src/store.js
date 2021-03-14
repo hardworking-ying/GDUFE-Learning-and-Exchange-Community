@@ -5,7 +5,7 @@ Vue.use(Vuex)
 import { getUserInfo } from "network/store.js" 
 export default new Vuex.Store({
   state: {
-    isLogin: false,
+    isLogin: true,
     user: {},
     baseURL: "http://localhost:8080/community",
     tag: "all",

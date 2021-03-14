@@ -1,12 +1,67 @@
 <template>
-  <div class="editor-container">
-    <quill-editor v-model="content" ref="myQuillEditor" :options="editorOption"
-      @change="changeValue">
-    </quill-editor>
+  <div id="editor">
+    <div class="editor-container" ref="myEditor">
+      <div class="editor-header">
+        <div class="releaser-avatar">
+          <img
+            src="https://th.bing.com/th/id/Rb572cf0dcff93fe13b71af8ab43fd454?rik=g5YdMgIO9siDaA&riu=http%3a%2f%2fimg.ewebweb.com%2fuploads%2f20191006%2f20%2f1570365161-shmEFlWfHU.jpg&ehk=u5A16U5IZ7u6Wi3KtC7OBarR5lf1nOd8UfJP0USvLXg%3d&risl=&pid=ImgRaw"
+            alt=""
+          />
+        </div>
+        <div class="info-about-content">
+          <div class="target-box" v-if="!isPost">
+            <i class="fa fa-reply" aria-hidden="true"></i> 可是菲尼克斯
+          </div>
+          <div class="tag-and-title" v-else>
+            <el-select v-model="editInfo.tag" placeholder="添加标签">
+              <el-option
+                v-for="(item, index) in Object.keys(tagList)"
+                :key="index"
+                :label="tagList[item].title"
+                :value="item"
+              >
+                <div
+                  :title="tagList[item].desc"
+                  :style="{ color: tagList[item].bgcolor }"
+                  class="tag-item"
+                >
+                  <i :class="tagList[item].icon"></i
+                  ><span>{{ tagList[item].title }}</span>
+                </div>
+              </el-option>
+            </el-select>
+            <el-input placeholder="请输入标题" v-model="editInfo.title"></el-input>
+          </div>
+        </div>
+        <div class="close-expand-box">
+          <i
+            v-if="isExpand"
+            class="fa fa-compress"
+            title="退出全屏"
+            @click="compressEditor"
+          ></i>
+          <i v-else class="fa fa-expand" title="全屏" @click="expandEditor"></i>
+          <i class="fa fa-times" title="关闭" @click="closeEditor"></i>
+        </div>
+      </div>
+      <quill-editor
+        v-model="editInfo.content"
+        ref="myQuillEditor"
+        :options="editorOption"
+      >
+      </quill-editor>
+      <div class="editor-bottom">
+        <div class="release-box clearfix">
+          <el-button type="primary" @click="release">发布</el-button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import { addQuillTitle } from "plugins/quill-editor";
+
 var options = {
   theme: "snow",
   modules: {
@@ -15,17 +70,14 @@ var options = {
       ["blockquote", "code-block"], //引用，代码块
       [{ list: "ordered" }, { list: "bullet" }], //列表
       [{ script: "sub" }, { script: "super" }], // 上下标
-      [{ indent: "-1" }, { indent: "+1" }], // 缩进
-      [{ direction: "rtl" }], // 文本方向
       [{ size: ["small", false, "large", "huge"] }], // 字体大小
       [{ header: [1, 2, 3, 4, 5, 6, false] }], //几级标题
 
-      [{ color: [] }, { background: [] }], // 字体颜色，字体背景颜色
-      [{ font: [] }], //字体
+      [{ color: [] }], // 字体颜色，字体背景颜色
       [{ align: [] }], //对齐方式
 
       ["clean"], //清除字体样式
-      ["image", "video"], //上传图片、上传视频
+      ["image"], //上传图片、上传视频
     ],
   },
 };
@@ -33,47 +85,160 @@ export default {
   name: "Editor",
   data() {
     return {
-      content: "",
+      editInfo: {
+        tag: this.tag,
+        title: this.title,
+        content: this.content,
+      },
       editorOption: options,
+      isExpand: false,
     };
+  },
+  props: {
+    isPost: true,
+    tag: {
+      type: String,
+      default: ""
+    },
+    title: {
+      type: String,
+      default: "" 
+    },
+    content: {
+      type: String,
+      default: ""
+    }
   },
   computed: {
     editor() {
       return this.$refs.myQuillEditor;
     },
+    tagList() {
+      return this.$store.state.tagList;
+    },
   },
   methods: {
-    changeValue($event){
-      console.log($event);
-      console.log(this.content);
-    }
+    expandEditor() {
+      this.isExpand = true;
+      this.$refs.myEditor.classList.add("expand-editor");
+      console.log(this.$refs.myEditor);
+    },
+    compressEditor() {
+      this.isExpand = false;
+      this.$refs.myEditor.classList.remove("expand-editor");
+    },
+    closeEditor() {
+      console.log("关闭编辑器");
+      this.$emit("closeEditor");
+    },
+    release() {
+      if(this.isPost) {
+        this.$emit("releasePost", this.editInfo);
+      }else {
+        this.$emit("releaseComment", this.editInfo.content);
+      }
+    },
+    clearEditor() {
+      this.editInfo.tag = "";
+      this.editInfo.title = "";
+      this.editInfo.content = "";
+    },
   },
-  created() {
-  }
+  created() {},
+  mounted() {
+    addQuillTitle();
+  },
 };
 </script>
 
 <style lang="less">
-.editor-container {
+#editor {
   position: fixed;
-  bottom: 0;
+  top: 0;
   left: 0;
-  right: 0;
-  margin: 0 auto;
-  width: 50%;
-  min-width: 500px;
-  height: 400px;
-  border: 2px solid @primary;
-  border-bottom: none;
-  border-radius: 16px 16px 0 0;
-  .quill-editor {
-    .ql-toolbar {
-      border-radius: 16px 16px 0 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(197, 195, 195, .5);
+  z-index: 999;
+  .editor-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    min-width: 500px;
+    height: 480px;
+    // z-index: 999;
+    border: 2px solid @primary;
+    border-bottom: none;
+    border-radius: 16px 16px 0 0;
+    background-color: #fff;
+    .editor-header {
+      width: 100%;
+      display: flex;
+      padding: 10px 20px 0 10px;
+      .releaser-avatar {
+        img {
+          width: 64px;
+          height: 64px;
+          border-radius: 8px;
+        }
+      }
+      .info-about-content {
+        margin: 0 20px;
+        flex: 1;
+        color: rgb(204, 204, 204);
+        .tag-and-title {
+          .el-select {
+            width: 120px;
+          }
+          .el-input {
+            margin-bottom: 10px;
+          }
+        }
+      }
+      .close-expand-box {
+        i {
+          margin-right: 16px;
+          font-size: 20px;
+          color: rgb(184, 180, 180);
+          cursor: pointer;
+          &:hover {
+            color: @primary;
+          }
+        }
+      }
     }
-    .ql-container {
-      height: 300px;
-      overflow-y: auto;
+    .quill-editor {
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      .ql-container {
+        flex: 1;
+        overflow-y: auto;
+      }
+    }
+    .editor-bottom {
+      margin-top: 10px;
+      .release-box {
+        float: right;
+        line-height: 50px;
+        margin-right: 20px;
+      }
     }
   }
+}
+.tag-item {
+  i {
+    margin-right: 10px;
+  }
+}
+.expand-editor {
+  width: 99% !important;
+  height: 99% !important;
 }
 </style>

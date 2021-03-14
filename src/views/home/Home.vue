@@ -10,6 +10,36 @@
           <div class="home-post-list">
             <OrderDropdown class="order-drop-down" />
             <PostList :posts="discussPosts" />
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
+            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
             <div class="load-more">
               <el-pagination
                 ref="pagination"
@@ -17,16 +47,18 @@
                 layout="prev, pager, next"
                 :current="currentPage"
                 :total="totalPost"
+                :hide-on-single-page="true"
                 @current-change="loadMore"
               >
               </el-pagination>
-              <!-- <button class="load-btn" @click="loadMore">加载更多</button> -->
             </div>
           </div>
         </div>
       </el-col>
     </el-row>
-    <Editor />
+    <transition>
+      <Editor :isPost="true" v-show="showEditor" @closeEditor="hideEditor" @releasePost="releasePost"/>
+    </transition>
   </div>
 </template>
 
@@ -53,6 +85,7 @@ export default {
       discussPosts: [],
       totalPost: 0,
       currentPage: 1,
+      showEditor: false,
     };
   },
   computed: {
@@ -82,6 +115,7 @@ export default {
       console.log("改变帖子排序方式：" + type);
     },
     sendPost() {
+      this.showEditor = true;
       console.log("点击发布主题");
     },
     goToHisPage(id) {
@@ -104,9 +138,15 @@ export default {
       this.totalPost = data.page.recordTotal;
       this.discussPosts.push(...data.discussPosts);
     },
+    hideEditor() {
+      console.log("监听关闭编辑器");
+      this.showEditor = false;
+    },
+    releasePost(post) {
+      console.log("发布主题", post);
+    }
   },
-  created() {
-    
+  created() {   
     this.getIndexData();
   },
   mounted() {
@@ -152,23 +192,14 @@ export default {
       width: 100%;
       margin: 30px 0 20px;
       text-align: center;
-      // .load-btn {
-      //   color: #808080;
-      //   width: 50%;
-      //   text-align: center;
-      //   padding: 8px 0;
-      //   background-color: #e0e0e0;
-      //   border: none;
-      //   border-radius: 40px;
-      //   cursor: pointer;
-      //   &:focus {
-      //     outline: none;
-      //   }
-      //   &:hover {
-      //     opacity: 0.8;
-      //   }
-      // }
     }
   }
+}
+.v-enter-active, .v-leave-active {
+  transition: all .3s ease;
+}
+.v-enter, .v-leave-to {
+  transform: translateY(480px);
+  opacity: 0;
 }
 </style>

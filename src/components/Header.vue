@@ -32,7 +32,10 @@
             <transition name="slide">
               <ul class="my-operation" v-show="showOperate">
                 <li>
-                  <i class="fa fa-user-o" aria-hidden="true"></i> 个人中心
+                  <router-link to="/profile"
+                    ><i class="fa fa-user-o" aria-hidden="true"></i>
+                    个人中心</router-link
+                  >
                 </li>
                 <li>
                   <i class="fa fa-sign-out" aria-hidden="true"></i> 退出登录
@@ -124,6 +127,9 @@ export default {
             &:hover {
               background-color: rgb(119, 161, 161);
             }
+            > a {
+              color: #fff;
+            }
           }
         }
       }
@@ -149,15 +155,13 @@ export default {
       }
     }
   }
-  .slide-enter-active {
-    transition: all 0.3s ease;
-  }
+  .slide-enter-active,
   .slide-leave-active {
-    transition: all 0.8s ease;
+    transition: all 0.3s ease;
   }
   .slide-enter, .slide-leave-to
 /* .slide-fade-leave-active for below version 2.1.8 */ {
-    transform: translateY(-100px);
+    transform: translateY(-30px);
     opacity: 0;
   }
 }
