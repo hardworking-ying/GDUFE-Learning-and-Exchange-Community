@@ -22,23 +22,21 @@
         <i class="fa fa-trash-o" title="删除"></i>
       </li>
       <li class="control-like" @click="clickLike">
-        <i v-if="likeStatus == 0" class="fa fa-heart-o" title="点赞"></i>
+        <i v-if="post.likeStatus == 0" class="fa fa-heart-o" title="点赞"></i>
         <i v-else class="fa fa-heart liked" title="取消点赞"></i>
-        {{ likeCount == 0 ? "" : likeCount }}
+        {{ post.likeCount == 0 ? "" : post.likeCount }}
       </li>
       <li class="control-reply" @click="clickReply">
         <i class="fa fa-reply" title="回复"></i>
-        {{ commentCount === 0 ? "" : commentCount }}
+        {{ post.commentCount === 0 ? "" : post.commentCount }}
       </li>
     </ul>
     <PostItem
       v-for="(item, index) in comments"
       :key="index"
       :post="item.comment"
-      :likeCount="item.likeCount"
-      :likeStatus="item.likeStatus"
       :user="item.user"
-      :commentCount="item.replyCount"
+      :comments="item.comments"
     >
       <template v-slot:targetUser>
         <el-tooltip
@@ -50,6 +48,7 @@
           <div slot="content" v-html="post.content"></div>
         </el-tooltip>
       </template>
+      <template v-slot:editOrReply><span>回复</span></template>
     </PostItem>
   </div>
 </template>
@@ -67,8 +66,6 @@ export default {
         return {};
       },
     },
-    likeCount: 0,
-    likeStatus: 0,
     user: {
       type: Object,
       default() {
@@ -81,26 +78,21 @@ export default {
         return [];
       },
     },
-    commentCount: 0,
   },
   created() {},
   mounted() {},
   methods: {
     clickReply() {
-      console.log("点击了回复");
+      console.log("点击了回复", this.post.id);
     },
     clickLike() {
-      console.log("点赞");
+      console.log("点赞", this.post.id);
     },
     clickDelete() {
-      console.log("点击删除");
+      console.log("点击删除", this.post.id);
     },
   },
-  filters: {
-    replyTips(value) {
-      return "原文：" + value;
-    },
-  }
+
 };
 </script>
 

@@ -3,7 +3,7 @@
     <el-row class="detail-header">
       <el-col :sm="{ span: 24, offset: 0 }" :md="{ span: 18, offset: 3 }">
         <div class="tag-box">
-          <div class="tag" :style="{color:color}"><i :class="icon"></i> {{ tag }}</div>
+          <div class="tag">{{ post.post.tag }}</div>
         </div>
         <div class="detail-title">{{ post.post.title }}</div>
       </el-col>
@@ -12,16 +12,32 @@
       <el-col :sm="{ span: 24, offset: 0 }" :md="{ span: 18, offset: 3 }">
         <nav class="detail-nav">
           <ul>
-            <el-button type="primary" @click.native="clickReply">回复</el-button>
+            <li>
+              <el-button type="primary" @click.native="clickReply"
+                >回复</el-button
+              >
+            </li>
+            <li>
+              <el-button type="primary" @click.native="clickSetTop"
+                >置顶</el-button
+              >
+            </li>
+            <li>
+              <el-button type="primary" @click.native="clickSetGood"
+                >加精</el-button
+              >
+            </li>
+            <li>
+              <el-button type="primary" @click.native="clickDelete"
+                >删除</el-button
+              >
+            </li>
           </ul>
         </nav>
         <div class="detail-content">
           <PostItem
             :post="post.post"
             :user="post.user"
-            :likeStatus="post.likeStatus"
-            :likeCount="post.likeCount"
-            :commentCount="post.post.commentCount"
             :comments="post.comments"
           >
             <template v-slot:authorFlag>
@@ -32,95 +48,80 @@
       </el-col>
     </el-row>
     <transition>
-      <Editor :isPost="true" v-show="showEditor" @closeEditor="hideEditor" @releasePost="releasePost"/>
+      <Editor
+        :isPost="false"
+        v-show="showEditor"
+        @closeEditor="hideEditor"
+        @releasePost="releasePost"
+      />
     </transition>
+    <el-backtop target=".main .post-detail" :bottom="50" :right="215"></el-backtop>
   </div>
 </template>
 
 <script>
 import PostItem from "./PostItem";
-import Editor from "components/Editor"
-import { getDetailPost } from "network/detail";
+import Editor from "components/Editor";
+import { getPostDetail } from "network/detail";
 
 export default {
   name: "PostDetail",
   components: {
     PostItem,
-    Editor
+    Editor,
   },
   data() {
     return {
       post: {
         post: {},
         user: {},
-        likeStatus: 0,
-        likeCount: 0,
         comments: [],
       },
+      showEditor: false,
     };
   },
-  computed: {
-    tag() {
-      return this.$store.state.tagList[this.post.post.tag].title;
-    },
-    icon() {
-      return this.$store.state.tagList[this.post.post.tag].icon;
-    },
-    color() {
-      return this.$store.state.tagList[this.post.post.tag].bgcolor;
-    }
-  },
+  computed: {},
   methods: {
     getPostData() {
-      getDetailPost(this.$route.params.postId).then((res) => {
-        console.log(res);
-        this.post = res;
+      const _this = this;
+      getPostDetail(this.$route.params.postId).then((res) => {
+        if (res.code === 200) {
+          _this.post = res.data;
+        } else {
+          _this.$message.error(res.msg);
+        }
       });
     },
     clickReply() {
+      this.showEditor = true;
       console.log("点击了回复");
-    }
+    },
+    clickSetTop() {
+      console.log("置顶");
+    },
+    clickSetGood() {
+      console.log("加精");
+    },
+    clickDelete() {
+      console.log("删除");
+    },
+    hideEditor() {
+      this.showEditor = false;
+    },
+    releasePost() {
+      console.log("fabu");
+    },
   },
   created() {
-    // this.getPostData();
-    this.post = {
-      post: {
-        tag: "bulletin",
-        title: "广财学习交流社区",
-        content:
-          "<p><strong style='color: rgb(255, 153, 0);' class='ql-size-large'>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</strong></p>",
-        createTime: "2020-12-11 14:00",
-        commentCount: 2
-      },
-      user: {
-        username: "八号楼时间",
-        headerUrl: "https://th.bing.com/th/id/Rb572cf0dcff93fe13b71af8ab43fd454?rik=g5YdMgIO9siDaA&riu=http%3a%2f%2fimg.ewebweb.com%2fuploads%2f20191006%2f20%2f1570365161-shmEFlWfHU.jpg&ehk=u5A16U5IZ7u6Wi3KtC7OBarR5lf1nOd8UfJP0USvLXg%3d&risl=&pid=ImgRaw",
-      },
-      likeCount: 126,
-      likeStatus: 1,
-      comments: [{
-        comment: {
-          content: "<h2><sup style='color: rgb(161, 0, 0);'><strong><em><u>哈西米露压抑了<span class='ql-cursor'>﻿</span></u></em></strong></sup></h2>",
-          createTime: "2021-01-30 12:00:08"
-        },
-        likeCount: 0,
-        likeStatus: 0,
-        replyCount: 0,
-        user: {
-          username: "忍者五毒",
-          headerUrl: "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA2cXfN?f=PNG&h=60&w=60&m=6&q=60&o=t&l=f",
-          createTime: "2020-11-28",
-        }
-      }
-        
-      ]
-    };
+    this.getPostData();
   },
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .post-detail {
+  height: 100%;
+  overflow-y: scroll;
   .detail-header {
     padding: 20px @global-padding;
     background-color: @primary;
@@ -151,11 +152,14 @@ export default {
     }
     .detail-nav {
       float: right;
-      // ul {
-      //   width: 150px;
-      //   position: fixed;
-      //   margin-top: 30px;
-      // }
+      > ul {
+        position: fixed;
+        top: 200px;
+        right: 200px;
+        > li {
+          margin-bottom: 20px;
+        }
+      }
     }
     .detail-content {
       margin-right: 225px;

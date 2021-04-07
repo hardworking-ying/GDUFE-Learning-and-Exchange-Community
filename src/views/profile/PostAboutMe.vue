@@ -2,7 +2,7 @@
   <div class="replyPost" @click="toDetail(post.id)">
     <div class="title">{{ post.title }}</div>
     <div class="content">{{ post.content }}</div>
-    <div class="delete-btn" @click="deletePost" v-if="canDelete">
+    <div class="delete-btn" @click="deletePost">
       <i class="el-icon-delete"></i>
     </div>
   </div>
@@ -22,7 +22,7 @@ export default {
     },
   },
   methods: {
-    LinkTo,
+    // LinkTo,
     deletePost() {
       this.$emit("deletePost");
     },
@@ -47,7 +47,7 @@ export default {
   .title {
     font-size: 18px;
     font-weight: bold;
-    color: rgb(76, 183, 213);
+    color: @primary;
     margin-bottom: 10px;
   }
   .content {

@@ -13,8 +13,14 @@ export default {
 
 <style>
 .footer {
-  padding: 10px 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 48px;
+  line-height: 48px;
   text-align: center;
   color: #ddd;
+  background-color: #fff;
 }
 </style>

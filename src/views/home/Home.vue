@@ -1,159 +1,229 @@
 <template>
-  <div class="home">
-    <Welcome />
+  <div class="home" @scroll="listenScroll($event)">
+    <!-- 欢迎栏开始 -->
+    <!-- <el-row
+      class="welcome"
+      :style="{ backgroundColor: currentTag ? currentTag.color : '#ededed' }"
+    >
+      <el-col :md="{ span: 24, offset: 0 }" :lg="{ span: 18, offset: 3 }">
+        <template v-if="currentTagId === 0">
+          <div class="welcome-words">欢迎来到 GDUFE 学习交流社区</div>
+          <p>社区由众多爱好者共同维护</p>
+          <p>QQ群：<span>1234567890</span> 进群密码：<span>888</span></p>
+        </template>
+        <template v-else>
+          <div class="tag-banner">
+            <div class="tag-title">
+              <i :class="currentTag.icon"></i>
+              {{ currentTag.name }}
+            </div>
+            <div class="tag-desc">{{ currentTag.describe }}</div>
+          </div>
+        </template>
+      </el-col>
+    </el-row> -->
+    <!-- 欢迎栏结束 -->
+    <!-- 主体内容开始 -->
     <el-row class="home-body-wrapper">
       <el-col :sm="{ span: 24, offset: 0 }" :md="{ span: 18, offset: 3 }">
         <div class="home-body">
+          <!-- 左侧标签导航开始 -->
           <div class="home-nav-list">
-            <Navigator @sendPost="sendPost" />
-          </div>
-          <div class="home-post-list">
-            <OrderDropdown class="order-drop-down" />
-            <PostList :posts="discussPosts" />
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <h1>哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</h1>
-            <div class="load-more">
-              <el-pagination
-                ref="pagination"
-                background
-                layout="prev, pager, next"
-                :current="currentPage"
-                :total="totalPost"
-                :hide-on-single-page="true"
-                @current-change="loadMore"
-              >
-              </el-pagination>
+            <div class="navigator">
+              <div class="release-box">
+                <el-button type="primary" @click="clickReleasePost"
+                  >发布主题</el-button
+                >
+              </div>
+              <ul class="nav-list">
+                <li
+                  :class="{ active: currentTagId === 0 }"
+                  @click="changeTag(0)"
+                >
+                  <i
+                    class="fa fa-comments-o tag-all-icon"
+                    aria-hidden="true"
+                  ></i>
+                  全部主题
+                </li>
+                <li
+                  v-for="item in tagList"
+                  :key="item.id"
+                  :title="item.name"
+                  :style="{
+                    color: currentTagId === item.id ? item.color : '#808080',
+                    fontWeight: currentTagId === item.id ? 'bold' : 'normal',
+                  }"
+                  @click="changeTag(item.id)"
+                >
+                  <i
+                    :class="item.icon"
+                    aria-hidden="true"
+                    :style="{ color: item.color }"
+                  ></i>
+                  {{ item.name }}
+                </li>
+              </ul>
             </div>
           </div>
+          <!-- 左侧标签导航结束 -->
+          <!-- 右侧内容开始 -->
+          <div class="home-post-list">
+            <OrderDropdown
+              class="order-drop-down"
+              @changeOrderType="selectOrderType"
+            />
+            <div class="post-list-wrapper" ref="postList">
+              <PostList :posts="postList" />
+              <div class="load-more">
+                <el-pagination
+                  ref="pagination"
+                  background
+                  layout="prev, pager, next"
+                  :total="page.total"
+                  @current-change="changeCurrentPage"
+                >
+                </el-pagination>
+              </div>
+            </div>
+          </div>
+          <!-- 右侧内容结束 -->
         </div>
       </el-col>
     </el-row>
+    <!-- 主体内容结束 -->
     <transition>
-      <Editor :isPost="true" v-show="showEditor" @closeEditor="hideEditor" @releasePost="releasePost"/>
+      <Editor
+        :isPost="true"
+        :tagList="tagList"
+        v-show="showEditor"
+        @closeEditor="hideEditor"
+        @releasePost="releasePost"
+      />
     </transition>
+    <el-backtop
+      target=".home .post-list-wrapper"
+      :bottom="50"
+      :right="215"
+    ></el-backtop>
   </div>
 </template>
 
 <script>
-import Welcome from "./Welcome";
-import Navigator from "./Navigator";
 import OrderDropdown from "./OrderDropdown";
 import PostList from "./PostList";
-import Editor from "components/Editor"
-import { getIndexData, getIndexDataNew } from "network/home";
-
+import Editor from "components/Editor";
+import {
+  getAllPost,
+  releasePost
+} from "network/home";
+import { tagMixin } from "@/common/mixin"
 
 export default {
   name: "home",
   components: {
-    Welcome,
-    Navigator,
     OrderDropdown,
     PostList,
-    Editor
+    Editor,
   },
   data() {
     return {
-      discussPosts: [],
-      totalPost: 0,
-      currentPage: 1,
+      postList: [],
       showEditor: false,
+      // 标签列表
+      tagList: [],
+      // 当前标签
+      currentTagId: 0,
+      // 分页
+      page: {
+        total: 0,
+        current: 1,
+        size: 10,
+      },
+      // 排序类型
+      orderType: 0,
     };
   },
-  computed: {
-    currentTag() {
-      return this.$store.state.tag;
+  props: {
+    keyword: "",
+  },
+  watch: {
+    // 监听搜索框变化
+    keyword(newValue, oldValue) {
+      // 重新获取数据
+      this.getAllPost();
     },
   },
+  computed: {},
   methods: {
-    getIndexData() {
-      let _this = this;
-      getIndexData().then((res) => {
-        console.log(res);
-        if(res.code===500) {
-          this.$message.error("服务器出错了！");
-        }else {
-          _this.setDiscussPosts(res);
+    // 更换标签
+    changeTag(tagId) {
+      this.currentTagId = tagId;
+      this.getAllPost();
+    },
+    // 获取帖子列表
+    getAllPost() {
+      const _this = this;
+      getAllPost({
+        keyword: this.keyword,
+        orderType: this.orderType,
+        current: this.page.current,
+        tag: this.currentTagId
+      }).then((res) => {
+        if (res.code === 200) {
+          _this.postList.push(...res.data.postList);
+          _this.page.total = res.data.total;
+        } else {
+          _this.$message.error(res.msg);
         }
       });
     },
-    changeOrderType(type) {
-      let _this = this;
-      getIndexDataNew(type, this.currentPage).then((res) => {
-        _this.setDiscussPosts(res);
-        console.log(_this.$refs.pagination);
-        _this.$refs.pagination.currentPage = 1;
-      });
-      console.log("改变帖子排序方式：" + type);
-    },
-    sendPost() {
+    // 点击发布主题
+    clickReleasePost() {
       this.showEditor = true;
       console.log("点击发布主题");
     },
+    // 选择排序方式
+    selectOrderType(type) {
+      this.page.current = 1;
+      this.orderType = type;
+      this.getAllPost();
+    },
+    // 更换当前页
+    changeCurrentPage(current) {
+      this.page.current = current;
+      this.getAllPost();
+      this.$refs.postList.scrollTo(0, 0);
+    },
+    // 进入用户主页
     goToHisPage(id) {
       console.log("点击了用户头像，即将跳转到id为" + id + "的用户的主页");
     },
+    // 进入帖子详情
     goToPostDetail(id) {
-      this.$router.push({name: "postDetail", params: {postId: id}});
-      console.log("点击了id为" + id + "的帖子，即将跳转到其详情页");
+      this.$router.push({ name: "postDetail", params: { postId: id } });
     },
-    loadMore(page) {
-      let _this = this;
-      this.currentPage = page;
-      getIndexDataNew(this.currentTag, page).then((res) => {
-        _this.setDiscussPosts(res);
-      });
-      console.log("加载更多帖子");
-    },
-    setDiscussPosts(data) {
-      this.discussPosts = [];
-      this.totalPost = data.page.recordTotal;
-      this.discussPosts.push(...data.discussPosts);
-    },
+    // 关闭编辑器
     hideEditor() {
-      console.log("监听关闭编辑器");
       this.showEditor = false;
     },
+    // 发布帖子
     releasePost(post) {
-      console.log("发布主题", post);
-    }
+      const _this = this;
+      releasePost(post).then(res => {
+        if(res.code===200) {
+          _this.$message.success(res.message);
+        }else {
+          _this.$message.error(res.msg);
+        }
+      })
+    },
   },
-  created() {   
-    this.getIndexData();
+  created() {
+    this.getAllPost();
   },
   mounted() {
     let _this = this;
-    this.$bus.$on("selectOrderType", (value) => {
-      _this.changeOrderType(value);
-    });
     this.$bus.$on("toHisPage", (value) => {
       _this.goToHisPage(value);
     });
@@ -161,44 +231,117 @@ export default {
       _this.goToPostDetail(value);
     });
   },
-  destoryed() {
-    this.$bus.$off("selectOrderType");
+  beforeDestory() {
     this.$bus.$off("toHisPage");
     this.$bus.$on("toPostDetail");
   },
+  mixins: [ tagMixin ]
 };
 </script>
 <style lang="less">
-.home-body-wrapper {
-  margin-top: 20px;
-}
-.home-body {
-  display: flex;
-  padding: 0 @global-padding;
-  .home-nav-list {
-    width: 24%;
-    margin-right: 15px;
+.home {
+  height: 100%;
+  overflow: hidden;
+  padding-top: 20px;
+  > .welcome {
+    color: #808080;
+    padding-bottom: 16px;
+    border-bottom: 4px solid @primary;
+    text-align: center;
+    transition: all 0.2s;
+    .welcome-words {
+      font-size: 20px;
+      line-height: 50px;
+    }
+    p {
+      line-height: 2;
+      span {
+        color: @primary;
+      }
+    }
+    .tag-banner {
+      color: #fff;
+      .tag-title {
+        font-size: 20px;
+        line-height: 50px;
+      }
+      .tag-desc {
+        line-height: 2;
+      }
+    }
   }
-  .home-post-list {
-    flex: 1;
-    text-align: left;
-    .el-input__inner {
-      width: 120px;
+  > .home-body-wrapper {
+    height: 100%;
+    > .el-col {
+      height: 100%;
     }
-    .order-drop-down {
-      margin-bottom: 20px;
-    }
-    .load-more {
-      width: 100%;
-      margin: 30px 0 20px;
-      text-align: center;
+    .home-body {
+      height: 100%;
+      display: flex;
+      padding: 0 @global-padding;
+      > .home-nav-list {
+        width: 24%;
+        > .navigator {
+          .release-box {
+            margin-bottom: 20px;
+            .el-button {
+              transition: all 0.2s;
+            }
+            .el-button:hover {
+              opacity: 0.8;
+            }
+          }
+          .nav-list {
+            li {
+              line-height: 2.5;
+              &:hover {
+                color: @primary;
+                cursor: pointer;
+              }
+              i {
+                font-weight: bold;
+                margin-right: 4px;
+              }
+              .tag-all-icon {
+                color: @primary;
+              }
+            }
+            .active {
+              color: @primary;
+            }
+          }
+        }
+      }
+      > .home-post-list {
+        height: 100%;
+        flex: 1;
+        text-align: left;
+        > .order-drop-down {
+          margin-bottom: 20px;
+          margin-left: 16px;
+        }
+        > .post-list-wrapper {
+          height: calc(100% - 60px);
+          overflow: scroll;
+        }
+        .el-input__inner {
+          width: 120px;
+        }
+        .load-more {
+          width: 100%;
+          margin: 30px 0 20px;
+          text-align: center;
+        }
+      }
     }
   }
 }
-.v-enter-active, .v-leave-active {
-  transition: all .3s ease;
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.3s ease;
 }
-.v-enter, .v-leave-to {
+.v-enter,
+.v-leave-to {
   transform: translateY(480px);
   opacity: 0;
 }

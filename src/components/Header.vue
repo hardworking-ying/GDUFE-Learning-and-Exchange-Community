@@ -9,13 +9,11 @@
           <li><router-link to="/home">首页</router-link></li>
         </ul>
         <div class="search-box">
-          <el-input
-            placeholder="搜索"
-            prefix-icon="el-icon-search"
-            size="mini"
+          <el-input placeholder="搜索" size="mini" v-model="keyWord"  v-on:keyup.enter.native="search"
+            ><i slot="prefix" class="el-input__icon el-icon-search" @click="search"></i
           ></el-input>
         </div>
-        <div class="personal-box" v-show="isLogin">
+        <div class="personal-box" v-show="!isLogin">
           <div>
             <span class="notify"
               ><i class="fa fa-bell" aria-hidden="true"></i
@@ -44,7 +42,7 @@
             </transition>
           </div>
         </div>
-        <div class="login-box" v-show="!isLogin">
+        <div class="login-box" v-show="isLogin">
           <router-link to="/register">注册</router-link>
           <router-link to="/login">登录</router-link>
         </div>
@@ -59,6 +57,7 @@ export default {
   data() {
     return {
       showOperate: false,
+      keyWord: "",
     };
   },
   props: {},
@@ -68,12 +67,12 @@ export default {
     },
   },
   methods: {
-    navigate() {
-      console.log("navigate");
-    },
     showOperation() {
       this.showOperate = !this.showOperate;
     },
+    search() {
+      this.$router.push('/home?keyword=' + this.keyWord);
+    }
   },
 };
 </script>

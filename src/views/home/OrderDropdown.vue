@@ -29,7 +29,7 @@ export default {
   },
   methods: {
     changeOrderType(newValue) {
-      this.$bus.$emit("selectOrderType", newValue);
+      this.$emit("changeOrderType", newValue);
     },
   },
 };

@@ -34,6 +34,7 @@ body {
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 li {
   list-style: none;
@@ -69,9 +70,17 @@ a {
   .main {
     position: relative;
     width: 100%;
-    // min-height: calc(100% - 105px);
-    height: calc(100% - 105px);
+    height: 100%;
     padding-top: 67px;
+    padding-bottom: 50px;
+    overflow: hidden;
   }
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+.el-backtop {
+  background-color: @primary !important;
+  color: #fff !important;
 }
 </style>

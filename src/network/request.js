@@ -6,7 +6,7 @@ var loading;
 export function request(config) {
   // 基本配置信息
   const instance = axios.create({
-    baseURL: store.state.baseURL,
+    // baseURL: store.state.baseURL,
     timeout: 5000
   });
 

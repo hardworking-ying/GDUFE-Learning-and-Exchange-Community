@@ -10,27 +10,30 @@
         </div>
         <div class="info-about-content">
           <div class="target-box" v-if="!isPost">
-            <i class="fa fa-reply" aria-hidden="true"></i> 可是菲尼克斯
+            <i class="fa fa-reply" aria-hidden="true"></i> 忍者五毒
           </div>
           <div class="tag-and-title" v-else>
             <el-select v-model="editInfo.tag" placeholder="添加标签">
               <el-option
-                v-for="(item, index) in Object.keys(tagList)"
-                :key="index"
-                :label="tagList[item].title"
-                :value="item"
+                v-for="item in tagList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
               >
                 <div
-                  :title="tagList[item].desc"
-                  :style="{ color: tagList[item].bgcolor }"
+                  :title="item.describe"
+                  :style="{ color: item.color }"
                   class="tag-item"
                 >
-                  <i :class="tagList[item].icon"></i
-                  ><span>{{ tagList[item].title }}</span>
+                  <i :class="item.icon"></i
+                  ><span>{{ item.name }}</span>
                 </div>
               </el-option>
             </el-select>
-            <el-input placeholder="请输入标题" v-model="editInfo.title"></el-input>
+            <el-input
+              placeholder="请输入标题"
+              v-model="editInfo.title"
+            ></el-input>
           </div>
         </div>
         <div class="close-expand-box">
@@ -81,6 +84,7 @@ var options = {
     ],
   },
 };
+
 export default {
   name: "Editor",
   data() {
@@ -97,25 +101,23 @@ export default {
   props: {
     isPost: true,
     tag: {
-      type: String,
-      default: ""
+      type: Number,
+      default: 1,
     },
     title: {
       type: String,
-      default: "" 
+      default: "",
     },
     content: {
       type: String,
-      default: ""
+      default: "",
+    },
+    tagList: {
+      type: Array,
+      default() {
+        return []
+      }
     }
-  },
-  computed: {
-    editor() {
-      return this.$refs.myQuillEditor;
-    },
-    tagList() {
-      return this.$store.state.tagList;
-    },
   },
   methods: {
     expandEditor() {
@@ -128,14 +130,47 @@ export default {
       this.$refs.myEditor.classList.remove("expand-editor");
     },
     closeEditor() {
-      console.log("关闭编辑器");
-      this.$emit("closeEditor");
+      const _this = this;
+      if (this.editInfo.title !== "" || this.editInfo.content !== "") {
+        this.$confirm("是否保留此次编辑?", "提示", {
+          confirmButtonText: "是",
+          cancelButtonText: "否",
+          type: "warning",
+        })
+          .then(() => {
+            _this.$emit("closeEditor");
+          })
+          .catch(() => {
+            _this.clearEditor();
+            _this.$emit("closeEditor");
+          });
+      }else {
+        this.$emit("closeEditor")
+      }
     },
     release() {
-      if(this.isPost) {
+      if (this.isPost) {
+        if(this.editInfo.tag==="") {
+          this.$message.error("请选择帖子标签!");
+          return;
+        }else if(this.editInfo.title==="") {
+          this.$message.error("标题不能为空！");
+          return;
+        }else if(this.editInfo.content==="") {
+          this.$message.error("帖子内容不能为空！");
+          return;
+        }
         this.$emit("releasePost", this.editInfo);
-      }else {
+        this.$emit("closeEditor");
+        this.clearEditor();
+      } else {
+        if(this.editInfo.content==="") {
+          this.$message.error("评论内容不能为空！");
+          return;
+        }
         this.$emit("releaseComment", this.editInfo.content);
+        this.$emit("closeEditor");
+        this.clearEditor();
       }
     },
     clearEditor() {
@@ -144,7 +179,9 @@ export default {
       this.editInfo.content = "";
     },
   },
-  created() {},
+  created() {
+
+  },
   mounted() {
     addQuillTitle();
   },
@@ -158,7 +195,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(197, 195, 195, .5);
+  background-color: rgba(197, 195, 195, 0.5);
   z-index: 999;
   .editor-container {
     position: absolute;

@@ -13,6 +13,8 @@ import 'quill/dist/quill.bubble.css'
 Vue.use(VueQuillEditor);
 Vue.config.productionTip = false
 Vue.prototype.$bus = new Vue();
+// 使用mock模拟数据
+import './mock/'
 
 new Vue({
   router,

@@ -1,17 +1,29 @@
 import {request} from './request'
-export function getIndexData() {
+
+export function getTagList() {
   return request({
-    url: "/index",
-    method: "get"
+    method: "GET",
+    url: "/getTagList",
   })
 }
-export function getIndexDataNew(orderType,page){
+
+export function getAllPost(data) {
   return request({
-    url: "/index",
-    method: "get",
+    method: "GET",
+    url: "/getAllPost",
     params: {
-      orderMode: orderType,
-      currentPage: page
+      keyword: data.keyword || "",
+      orderType: data.orderType || 0,
+      tag: data.tag || 0,
+      current: data.current || 1
     }
+  })
+}
+
+export function releasePost(data) {
+  return request({
+    method: "POST",
+    url: "/releasePost",
+    data
   })
 }

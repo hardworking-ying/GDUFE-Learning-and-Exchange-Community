@@ -15,7 +15,7 @@
     <div class="post-body" @click="clickPost">
       <div class="post-title">{{ post.post.title }}</div>
       <div class="post-tag-date clearfix">
-        <div class="post-tag">公告</div>
+        <div class="post-tag">{{ post.post.tag }}</div>
         <div class="post-date">{{ post.post.createTime }}</div>
       </div>
       <div class="post-content">{{ post.post.content }}</div>
@@ -26,7 +26,7 @@
         {{ post.post.commentCount }}
       </div>
       <div class="like-num">
-        <i class="fa fa-heart-o" aria-hidden="true"></i> {{ post.likeCount }}
+        <i class="fa fa-heart-o" aria-hidden="true"></i> {{ post.post.likeCount }}
       </div>
     </div>
   </div>
@@ -57,13 +57,13 @@ export default {
 <style lang="less">
 .post {
   width: 100%;
-  padding: 16px 0;
+  padding: 16px;
   display: flex;
   transition: all 0.2s;
   &:hover {
     background-color: rgb(247, 247, 247);
-    border-radius: 8px;
-    box-shadow: 0 0 10px 2px rgb(228, 227, 227);
+    border-radius: 16px;
+    box-shadow: 0 0 10px -2px rgb(218, 215, 215);
   }
   .postman {
     .postman-avatar {

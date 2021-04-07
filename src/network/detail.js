@@ -1,5 +1,5 @@
 import { request } from "./request"
-export function getDetailPost(id) {
+export function getPostDetail(id) {
   return request({
     url: "/discuss/detail/" + id,
     method: "get",
