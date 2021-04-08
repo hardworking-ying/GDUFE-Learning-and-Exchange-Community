@@ -13,7 +13,7 @@
             ><i slot="prefix" class="el-input__icon el-icon-search" @click="search"></i
           ></el-input>
         </div>
-        <div class="personal-box" v-show="!isLogin">
+        <div class="personal-box" v-show="isLogin">
           <div>
             <span class="notify"
               ><i class="fa fa-bell" aria-hidden="true"></i
@@ -42,7 +42,7 @@
             </transition>
           </div>
         </div>
-        <div class="login-box" v-show="isLogin">
+        <div class="login-box" v-show="!isLogin">
           <router-link to="/register">注册</router-link>
           <router-link to="/login">登录</router-link>
         </div>

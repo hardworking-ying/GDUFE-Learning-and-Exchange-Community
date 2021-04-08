@@ -68,3 +68,11 @@ Mock.mock('/releasePost', "post", function(option) {
     message: "发帖成功！",
   })
 })
+
+Mock.mock('/login', "post", function(option) {
+  console.log("登录 " ,option);
+  return {
+    code: 200,
+    message: "登陆成功！",
+  }
+})

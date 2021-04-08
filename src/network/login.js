@@ -2,11 +2,10 @@ import { request } from "./request"
 import qs from "qs"
 export function loginCheck(data) {
   const dataobj = {
-    username: data.email,
+    username: data.username,
     // email: data.email,
     password: data.password,
-    code: data.checkCode,
-    rememberme: data.remember,   
+    code: data.checkCode,  
   };
   const formData = qs.stringify(dataobj)
   const postData = { formData, $_isFormData: true }

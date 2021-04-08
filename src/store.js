@@ -6,7 +6,11 @@ import { getUserInfo } from "network/store.js"
 export default new Vuex.Store({
   state: {
     isLogin: false,
-    user: {},
+    user: {
+      id: 1,
+      name: "美少女战士",
+      headerUrl: "",
+    },
     baseURL: "http://localhost:8080/community",
   },
   getters: {

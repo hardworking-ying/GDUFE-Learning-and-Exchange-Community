@@ -28,7 +28,6 @@
           <el-tab-pane label="我的点赞">点赞</el-tab-pane>
           <el-tab-pane label="我的关注">关注</el-tab-pane>
           <el-tab-pane label="我的粉丝">粉丝</el-tab-pane>
-          <!-- <el-tab-pane label="个人中心">个人中心</el-tab-pane> -->
         </el-tabs>
       </el-col>
     </el-row>

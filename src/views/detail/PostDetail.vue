@@ -72,6 +72,7 @@ export default {
   },
   data() {
     return {
+      postId: -1,
       post: {
         post: {},
         user: {},
@@ -80,11 +81,12 @@ export default {
       showEditor: false,
     };
   },
-  computed: {},
+  computed: {
+  },
   methods: {
     getPostData() {
       const _this = this;
-      getPostDetail(this.$route.params.postId).then((res) => {
+      getPostDetail(this.postId).then((res) => {
         if (res.code === 200) {
           _this.post = res.data;
         } else {
@@ -113,6 +115,7 @@ export default {
     },
   },
   created() {
+    this.postId = this.$route.params.postId;
     this.getPostData();
   },
 };
