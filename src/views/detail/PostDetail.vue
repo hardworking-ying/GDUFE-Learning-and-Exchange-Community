@@ -17,21 +17,47 @@
                 >回复</el-button
               >
             </li>
-            <li>
-              <el-button type="primary" @click.native="clickSetTop"
-                >置顶</el-button
-              >
-            </li>
-            <li>
-              <el-button type="primary" @click.native="clickSetGood"
-                >加精</el-button
-              >
-            </li>
-            <li>
-              <el-button type="primary" @click.native="clickDelete"
-                >删除</el-button
-              >
-            </li>
+            <template v-if="$store.state.user.type === 1">
+              <li>
+                <el-button
+                  v-if="post.post.isTop === 0"
+                  type="primary"
+                  @click.native="clickSetTop"
+                  >置顶</el-button
+                >
+                <el-button v-else type="primary" @click.native="clickUnSetTop"
+                  >取消置顶</el-button
+                >
+              </li>
+              <li>
+                <el-button
+                  v-if="post.post.isWonderful === 0"
+                  type="primary"
+                  @click.native="clickSetGood"
+                  >加精</el-button
+                >
+                <el-button v-else type="primary" @click.native="clickUnSetGood"
+                  >取消加精</el-button
+                >
+              </li>
+              <li>
+                <el-button type="primary" @click.native="clickDeleteByAdmin"
+                  >删除</el-button
+                >
+              </li>
+            </template>
+            <template v-if="$store.state.user.id === post.user.id">
+              <li>
+                <el-button type="primary" @click.native="clickEdit"
+                  >编辑</el-button
+                >
+              </li>
+              <li>
+                <el-button type="primary" @click.native="clickDeleteHimself"
+                  >删除</el-button
+                >
+              </li>
+            </template>
           </ul>
         </nav>
         <div class="detail-content">
@@ -49,20 +75,47 @@
     </el-row>
     <transition>
       <Editor
-        :isPost="false"
-        v-show="showEditor"
+        :isPost="editType === 0"
+        :targetUser="replyTarget.targetUsername"
+        :originalPost="originalPost"
+        v-if="showEditor"
         @closeEditor="hideEditor"
         @releasePost="releasePost"
+        @releaseComment="releaseComment"
       />
     </transition>
-    <el-backtop target=".main .post-detail" :bottom="50" :right="215"></el-backtop>
+    <el-backtop
+      target=".main .post-detail"
+      :bottom="50"
+      :right="215"
+    ></el-backtop>
+    <el-dialog title="输入删除理由" :visible.sync="showDelTip" width="30%">
+      <el-input
+        placeholder="请输入删除理由"
+        v-model.trim="delReason"
+        required
+      ></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeDelTip">取 消</el-button>
+        <el-button type="primary" @click="delPostByAdmin">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import PostItem from "./PostItem";
 import Editor from "components/Editor";
-import { getPostDetail } from "network/detail";
+import {
+  getPostDetail,
+  delPostSelf,
+  delPostByAdmin,
+  like,
+  unLike,
+  reply,
+  setTop,
+  setWonderful,
+} from "network/detail";
 
 export default {
   name: "PostDetail",
@@ -79,11 +132,24 @@ export default {
         comments: [],
       },
       showEditor: false,
+      showDelTip: false,
+      delReason: "",
+      editType: 0, // 0:帖子 1:评论
+      replyTarget: {
+        targetId: 0,
+        targetUserId: 0,
+        targetUsername: "",
+      },
+      originalPost: {
+        tag: "",
+        title: "",
+        content: "",
+      },
     };
   },
-  computed: {
-  },
+  computed: {},
   methods: {
+    // 获取帖子详情
     getPostData() {
       const _this = this;
       getPostDetail(this.postId).then((res) => {
@@ -94,29 +160,209 @@ export default {
         }
       });
     },
+    // 点击回复按钮
     clickReply() {
+      this.editType = 1;
+      this.replyTarget.targetId = this.post.post.id;
+      this.replyTarget.targetUserId = this.post.user.id;
+      this.replyTarget.targetUsername = this.post.user.username;
       this.showEditor = true;
       console.log("点击了回复");
     },
+    // 点击置顶按钮
     clickSetTop() {
       console.log("置顶");
+      const _this = this;
+      this.$confirm("确定置顶该帖子吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          _this.setTop();
+        })
+        .catch(() => {
+          return false;
+        });
     },
+    setTop() {
+      setTop(this.post.post.id).then((res) => {
+        if (res.code == "200") {
+          _this.post.post.status = 1;
+        } else {
+          _this.$messgae.error(res.msg);
+        }
+      });
+    },
+    // 取消置顶
+    clickUnSetTop() {
+      console.log("取消置顶");
+      const _this = this;
+      this.$confirm("确定取消置顶该帖子吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          _this.unSetTop();
+        })
+        .catch(() => {
+          return false;
+        });
+    },
+    unSetTop() {
+      unSetTop(this.post.post.id).then((res) => {
+        if (res.code == "200") {
+          _this.post.post.status = 1;
+        } else {
+          _this.$messgae.error(res.msg);
+        }
+      });
+    },
+    // 点击加精按钮
     clickSetGood() {
       console.log("加精");
+      this.$confirm("确定设置该帖子为精帖吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          _this.setGood();
+        })
+        .catch(() => {
+          return false;
+        });
     },
-    clickDelete() {
-      console.log("删除");
+    setGood() {
+      const _this = this;
+      setWonderful(this.post.post.id).then((res) => {
+        if (res.code == "200") {
+          _this.post.post.status = 2;
+        } else {
+          _this.$messgae.error(res.msg);
+        }
+      });
     },
+    // 取消加精
+    clickUnSetGood() {
+      console.log("加精");
+      this.$confirm("确定设置该帖子为精帖吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          _this.unSetGood();
+        })
+        .catch(() => {
+          return false;
+        });
+    },
+    unSetGood() {
+      const _this = this;
+      unSetWonderful(this.post.post.id).then((res) => {
+        if (res.code == "200") {
+          _this.post.post.status = 2;
+        } else {
+          _this.$messgae.error(res.msg);
+        }
+      });
+    },
+    // 用户自己点击删除按钮
+    clickDeleteHimself() {
+      const _this = this;
+      this.$confirm("此操作将永久删除该帖子及相关评论, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          _this.delPostSelf();
+        })
+        .catch(() => {
+          return false;
+        });
+    },
+    delPostSelf() {
+      const _this = this;
+      delPostSelf(id).then((res) => {
+        if (res.code == "200") {
+          // _this.$message.success()
+          _this.$router.go(-1);
+        }
+      });
+    },
+    // 管理员点击删除
+    clickDeleteByAdmin() {
+      this.showDelTip = true;
+    },
+    delPostByAdmin() {
+      const _this = this;
+      if (this.delReason === "") {
+        this.$message.error("请输入删除理由！");
+        return false;
+      }
+      delPostByAdmin({
+        postId: this.post.post.id,
+        reason: this.delReason,
+      }).then((res) => {
+        if (res.code == "200") {
+          _this.showDelTip = false;
+          _this.delReason = "";
+          _this.$router.go(-1);
+        } else {
+          _this.$message.error(res.msg);
+        }
+      });
+    },
+    closeDelTip() {
+      this.showDelTip = false;
+      this.delReason = "";
+    },
+    // 关闭编辑页面
     hideEditor() {
       this.showEditor = false;
     },
-    releasePost() {
-      console.log("fabu");
+    // 发布帖子
+    releasePost(post) {
+      console.log("编辑帖子", post);
+    },
+    //发布评论
+    releaseComment(comment) {
+      console.log(this.replyTarget);
+      console.log("发布评论", comment);
+    },
+    // 点击编辑
+    clickEdit() {
+      this.editType = 0;
+      this.originalPost.tag = this.post.post.tag;
+      this.originalPost.title = this.post.post.title;
+      this.originalPost.content = this.post.post.content;
+      this.showEditor = true;
+    },
+    // 清空originalPost
+    clearOriginalPost() {
+      this.originalPost.tag = 0;
+      this.originalPost.title = "";
+      this.originalPost.content = "";
     },
   },
   created() {
     this.postId = this.$route.params.postId;
     this.getPostData();
+  },
+  mounted() {
+    this.$bus.$on("clickReply", (targetId, targetUserId, targetUsername) => {
+      this.replyTarget.targetId = targetId;
+      this.replyTarget.targetUserId = targetUserId;
+      this.replyTarget.targetUsername = targetUsername;
+      this.editType = 1;
+      this.showEditor = true;
+    });
+  },
+  beforeDestroy() {
+    this.$bus.$off("clickReply");
   },
 };
 </script>

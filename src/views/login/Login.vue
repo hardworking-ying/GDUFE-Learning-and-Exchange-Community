@@ -30,7 +30,7 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-checkbox v-model="remember">记住密码</el-checkbox>
+          <el-checkbox v-model="remember" true-label="true" false-label="false">记住密码</el-checkbox>
         </el-form-item>
       </el-form>
     </template>
@@ -48,6 +48,7 @@
 import CommonForm from "components/CommonForm";
 import { loginCheck } from "network/login";
 import CryptoJS from "crypto-js";
+import { getUserInfo } from "network/store.js" 
 
 const SECRET = "GDUFESECRETKEY520100";
 export default {
@@ -58,11 +59,11 @@ export default {
   data() {
     return {
       loginForm: {
-        email: "",
+        username: "",
         password: "",
         checkCode: "",
       },
-      remember: false,
+      remember: "false",
       kaptcha: "",
       rules: {
         username: [
@@ -98,17 +99,22 @@ export default {
         loginCheck(this.loginForm).then(
           (res) => {
             if (res.code == "200") {
-              _this.$message.success("登录成功，即将跳转到首页");
-              if (this.remember) {
+              if (this.remember==="true") {
                 _this.setAccountCookie();
               }else {
                 _this.clearAccountCookie();
-              }
+              };
+              _this.$store.commit("onLogin");
+              getUserInfo(res.data).then(result => {
+                if(result.code=="200") {
+                  _this.$store.commit("initUser", { user: result.data });
+                }else {
+                  _this.$message.error(result.msg);
+                }
+              });
               setTimeout(() => {
-                _this.$store.commit("onLogin");
-                _this.$store.dispatch("initLogin", { userId: res.msg });
                 _this.$router.replace("/home");
-              }, 2000);
+              }, 500);
             } else if (res.code == "2006") {
               // 刷新化验证码
               _this.refreshKaptcha();
@@ -135,7 +141,7 @@ export default {
           (error) => {}
         );
       });
-      // console.log("点击了登录", this.loginForm);
+      console.log("点击了登录", this.loginForm);
     },
     // 刷新验证码
     refreshKaptcha() {
@@ -153,6 +159,7 @@ export default {
         SECRET
       ).toString();
       this.$cookies.set("password", secretPwd);
+      this.$cookies.set("remember", this.remember);
     },
     // 从cookie中获取账号信息
     getAccountCookie() {
@@ -166,11 +173,17 @@ export default {
         let pwdByte = CryptoJS.AES.decrypt(pwd, SECRET);
         this.loginForm.password = pwdByte.toString(CryptoJS.enc.Utf8);
       }
+      this.remember = this.$cookies.get("remember");
     },
     // 清楚cookie账号信息
     clearAccountCookie() {
-      this.$cookie.remove("username");
-      this.$cookie.remove("password");
+      this.$cookies.remove("username");
+      this.$cookies.remove("password");
+      this.$cookies.remove("remember");
+    },
+    // 请求用户信息
+    getUserInfo() {
+      
     }
   },
   created() {

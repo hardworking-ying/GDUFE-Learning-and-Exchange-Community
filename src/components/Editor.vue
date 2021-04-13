@@ -3,14 +3,11 @@
     <div class="editor-container" ref="myEditor">
       <div class="editor-header">
         <div class="releaser-avatar">
-          <img
-            src="https://th.bing.com/th/id/Rb572cf0dcff93fe13b71af8ab43fd454?rik=g5YdMgIO9siDaA&riu=http%3a%2f%2fimg.ewebweb.com%2fuploads%2f20191006%2f20%2f1570365161-shmEFlWfHU.jpg&ehk=u5A16U5IZ7u6Wi3KtC7OBarR5lf1nOd8UfJP0USvLXg%3d&risl=&pid=ImgRaw"
-            alt=""
-          />
+          <img :src="$store.state.user.headerUrl" alt="" />
         </div>
         <div class="info-about-content">
           <div class="target-box" v-if="!isPost">
-            <i class="fa fa-reply" aria-hidden="true"></i> 忍者五毒
+            <i class="fa fa-reply" aria-hidden="true"></i> {{ targetUser }}
           </div>
           <div class="tag-and-title" v-else>
             <el-select v-model="editInfo.tag" placeholder="添加标签">
@@ -25,8 +22,7 @@
                   :style="{ color: item.color }"
                   class="tag-item"
                 >
-                  <i :class="item.icon"></i
-                  ><span>{{ item.name }}</span>
+                  <i :class="item.icon"></i><span>{{ item.name }}</span>
                 </div>
               </el-option>
             </el-select>
@@ -90,9 +86,9 @@ export default {
   data() {
     return {
       editInfo: {
-        tag: this.tag,
-        title: this.title,
-        content: this.content,
+        tag: this.originalPost.tag,
+        title: this.originalPost.title,
+        content: this.originalPost.content,
       },
       editorOption: options,
       isExpand: false,
@@ -100,24 +96,26 @@ export default {
   },
   props: {
     isPost: true,
-    tag: {
-      type: Number,
-      default: 1,
-    },
-    title: {
-      type: String,
-      default: "",
-    },
-    content: {
-      type: String,
-      default: "",
+    originalPost: {
+      type: Object,
+      default() {
+        return {
+          tag: "",
+          title: "",
+          content: "",
+        };
+      },
     },
     tagList: {
       type: Array,
       default() {
-        return []
-      }
-    }
+        return [];
+      },
+    },
+    targetUser: {
+      type: String,
+      default: "",
+    },
   },
   methods: {
     expandEditor() {
@@ -144,19 +142,19 @@ export default {
             _this.clearEditor();
             _this.$emit("closeEditor");
           });
-      }else {
-        this.$emit("closeEditor")
+      } else {
+        this.$emit("closeEditor");
       }
     },
     release() {
       if (this.isPost) {
-        if(this.editInfo.tag==="") {
+        if (this.editInfo.tag === "") {
           this.$message.error("请选择帖子标签!");
           return;
-        }else if(this.editInfo.title==="") {
+        } else if (this.editInfo.title === "") {
           this.$message.error("标题不能为空！");
           return;
-        }else if(this.editInfo.content==="") {
+        } else if (this.editInfo.content === "") {
           this.$message.error("帖子内容不能为空！");
           return;
         }
@@ -164,7 +162,7 @@ export default {
         this.$emit("closeEditor");
         this.clearEditor();
       } else {
-        if(this.editInfo.content==="") {
+        if (this.editInfo.content === "") {
           this.$message.error("评论内容不能为空！");
           return;
         }
@@ -179,9 +177,7 @@ export default {
       this.editInfo.content = "";
     },
   },
-  created() {
-
-  },
+  created() {},
   mounted() {
     addQuillTitle();
   },

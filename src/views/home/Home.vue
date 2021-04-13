@@ -197,6 +197,7 @@ export default {
     },
     // 进入用户主页
     goToHisPage(id) {
+      this.$router.push({ name: "profile", params: { userId: id }})
       console.log("点击了用户头像，即将跳转到id为" + id + "的用户的主页");
     },
     // 进入帖子详情

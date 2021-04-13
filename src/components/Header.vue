@@ -9,15 +9,25 @@
           <li><router-link to="/home">首页</router-link></li>
         </ul>
         <div class="search-box">
-          <el-input placeholder="搜索" size="mini" v-model="keyWord"  v-on:keyup.enter.native="search"
-            ><i slot="prefix" class="el-input__icon el-icon-search" @click="search"></i
+          <el-input
+            placeholder="搜索"
+            size="mini"
+            v-model="keyWord"
+            v-on:keyup.enter.native="search"
+            ><i
+              slot="prefix"
+              class="el-input__icon el-icon-search"
+              @click="search"
+            ></i
           ></el-input>
         </div>
         <div class="personal-box" v-show="isLogin">
           <div>
-            <span class="notify"
-              ><i class="fa fa-bell" aria-hidden="true"></i
-            ></span>
+            <router-link to="/message">
+              <span class="notify"
+                ><i class="fa fa-bell" aria-hidden="true"></i
+              ></span>
+            </router-link>
           </div>
           <div
             class="top-operation"
@@ -30,12 +40,12 @@
             <transition name="slide">
               <ul class="my-operation" v-show="showOperate">
                 <li>
-                  <router-link to="/profile"
+                  <router-link :to="'/profile/' + $store.state.user.id"
                     ><i class="fa fa-user-o" aria-hidden="true"></i>
                     个人中心</router-link
                   >
                 </li>
-                <li>
+                <li @click="logout">
                   <i class="fa fa-sign-out" aria-hidden="true"></i> 退出登录
                 </li>
               </ul>
@@ -71,8 +81,13 @@ export default {
       this.showOperate = !this.showOperate;
     },
     search() {
-      this.$router.push('/home?keyword=' + this.keyWord);
-    }
+      this.$router.push("/home?keyword=" + this.keyWord);
+    },
+    logout() {
+      console.log("注销");
+      sessionStorage.removeItem("store");
+      this.$store.commit("offLogin");
+    },
   },
 };
 </script>
@@ -141,6 +156,9 @@ export default {
             color: rgba(255, 255, 255, 0.8);
           }
         }
+      }
+      .notify {
+        color: #fff;
       }
     }
     .login-box {

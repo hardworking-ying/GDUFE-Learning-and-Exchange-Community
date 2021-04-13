@@ -27,7 +27,7 @@ export default {
   flex-direction: column;
   align-items: center;
   width: 100px;
-  height: 150px;
+  height: 120px;
   cursor: pointer;
   &:hover {
     opacity: 0.8;

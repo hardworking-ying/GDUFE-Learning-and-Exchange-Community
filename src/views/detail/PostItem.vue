@@ -2,8 +2,10 @@
   <div class="post-item">
     <div class="item-header">
       <div class="author-info">
-        <img :src="user.headerUrl" alt="" class="author-avatar" />
-        <span class="author-name">{{ user.username }}</span>
+        <router-link :to="'/profile/' + user.id" :title="'去'+user.username+'的主页'">
+          <img :src="user.headerUrl" alt="" class="author-avatar" />
+          <span class="author-name">{{ user.username }}</span>
+        </router-link>
       </div>
       <div class="edit-time">
         <span>{{ post.createTime }}</span>
@@ -18,15 +20,25 @@
       <div v-html="post.content"></div>
     </div>
     <ul class="item-control clearfix">
-      <li class="control-delete" @click="clickDelete">
+      <!-- <li class="control-delete" @click="clickDelete">
         <i class="fa fa-trash-o" title="删除"></i>
-      </li>
-      <li class="control-like" @click="clickLike">
-        <i v-if="post.likeStatus == 0" class="fa fa-heart-o" title="点赞"></i>
-        <i v-else class="fa fa-heart liked" title="取消点赞"></i>
+      </li> -->
+      <li class="control-like">
+        <i
+          v-if="post.likeStatus == 0"
+          class="fa fa-heart-o"
+          title="点赞"
+          @click="clickLike"
+        ></i>
+        <i
+          v-else
+          class="fa fa-heart liked"
+          title="取消点赞"
+          @click="clickUnLike"
+        ></i>
         {{ post.likeCount == 0 ? "" : post.likeCount }}
       </li>
-      <li class="control-reply" @click="clickReply">
+      <li class="control-reply" @click="clickReply(post.id, user)">
         <i class="fa fa-reply" title="回复"></i>
         {{ post.commentCount === 0 ? "" : post.commentCount }}
       </li>
@@ -39,11 +51,7 @@
       :comments="item.comments"
     >
       <template v-slot:targetUser>
-        <el-tooltip
-          class="target"
-          effect="light"
-          placement="top-start"
-        >            
+        <el-tooltip class="target" effect="light" placement="top-start">
           <span><i class="fa fa-reply"></i> {{ user.username }}</span>
           <div slot="content" v-html="post.content"></div>
         </el-tooltip>
@@ -54,6 +62,7 @@
 </template>
 
 <script>
+import { like, unLike } from "network/detail";
 export default {
   name: "PostItem",
   data() {
@@ -83,16 +92,40 @@ export default {
   mounted() {},
   methods: {
     clickReply() {
-      console.log("点击了回复", this.post.id);
+      this.$bus.$emit(
+        "clickReply",
+        this.post.id,
+        this.user.id,
+        this.user.username
+      );
     },
     clickLike() {
-      console.log("点赞", this.post.id);
+      const _this = this;
+      like({ id: this.post.id, targetUserId: this.user.id }).then((res) => {
+        console.log(res);
+        if (res.code == "200") {
+          _this.post.likeStatus = _this.post.likeStatus === 0 ? 1 : 0;
+          _this.post.likeCount = res.data;
+        } else {
+          _this.$message.error(res.data.msg);
+        }
+      });
+    },
+    clickUnLike() {
+      const _this = this;
+      unLike({ id: this.post.id, targetUserId: this.user.id }).then((res) => {
+        if (res.code == "200") {
+          _this.post.likeStatus = _this.post.likeStatus === 0 ? 1 : 0;
+          _this.post.likeCount = res.data;
+        } else {
+          _this.$message.error(res.msg);
+        }
+      });
     },
     clickDelete() {
-      console.log("点击删除", this.post.id);
+      console.log("点击删除", this.post.id, this.user.id);
     },
   },
-
 };
 </script>
 

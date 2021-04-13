@@ -71,8 +71,9 @@ Mock.mock('/releasePost', "post", function(option) {
 
 Mock.mock('/login', "post", function(option) {
   console.log("登录 " ,option);
-  return {
+  return Mock.mock({
     code: 200,
     message: "登陆成功！",
-  }
+    data: "@id"
+  })
 })

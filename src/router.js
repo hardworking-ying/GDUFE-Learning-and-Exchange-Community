@@ -25,12 +25,12 @@ export default new Router({
     props: route => ({ keyword:route.query.keyword })
   },
   {
-    path: '/profile',
-    component: Profile
+    path: '/profile/:userId',
+    name: 'profile',
+    component: () => import('views/profile/Profile.vue')
   },
   {
     path: '/login',
-    name: 'login',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -45,6 +45,11 @@ export default new Router({
     path: '/detail/:postId',
     name: 'postDetail',
     component: () => import('views/detail/PostDetail.vue')
+  },
+  {
+    path: '/message',
+    name: "message",
+    component: () => import('views/message/Message.vue')
   }
   ]
 })
