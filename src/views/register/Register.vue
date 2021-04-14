@@ -26,14 +26,6 @@
             type="password"
           ></el-input>
         </el-form-item>
-        <el-form-item prop="agree">
-          <el-checkbox
-            v-model="registerForm.agree"
-            :true-label="1"
-            :false-label="0"
-            >我已阅读并同意<a href="#">隐私政策</a></el-checkbox
-          >
-        </el-form-item>
       </el-form>
     </template>
     <template v-slot:submit>
@@ -47,6 +39,8 @@
 
 <script>
 import CommonForm from "components/CommonForm";
+import { sendRegister } from "network/register";
+import { LinkTo } from "@/assets/util";
 export default {
   name: "register",
   components: {
@@ -60,11 +54,11 @@ export default {
       callback();
     };
     var validateEmail = (rule, value, callback) => {
-      if(!value) {
+      if (!value) {
         callback(new Error("邮箱不能为空!"));
-      }else {
+      } else {
         const regEmail = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-        if(!regEmail.test(value)) {
+        if (!regEmail.test(value)) {
           return callback(new Error("邮箱格式不正确！"));
         }
         callback();
@@ -89,53 +83,35 @@ export default {
         callback();
       }
     };
-    var validateAgree = (rule, value, callback) => {
-      if(value === 0) {
-        callback(new Error("请先同意隐私政策！"));
-      }else {
-        callback();
-      }
-    };
     return {
       registerForm: {
         username: "",
         email: "",
         password: "",
         confirmPassword: "",
-        agree: 0,
       },
       rules: {
         username: [
           {
             validator: validateUsername,
-            // trigger: "blur",
           },
         ],
         email: [
           {
             validator: validateEmail,
-            // trigger: "blur",
-          }
+          },
         ],
         password: [
           {
             validator: validatePass,
-            // trigger: "blur",
           },
         ],
         confirmPassword: [
           {
             validator: validateConfirmPass,
-            // trigger: "blur",
           },
           {},
         ],
-        agree: [
-          {
-            validator: validateAgree,
-            // trigger: "blur",
-          }
-        ]
       },
     };
   },
@@ -143,17 +119,21 @@ export default {
   methods: {
     register() {
       this.$refs.registerForm.validate((valid) => {
-          if (valid) {
-            alert('注册成功!');
+        if (!valid) return false;
+        let { username, email, password, confirmPwd } = this.registerForm;
+        sendRegister(username, password, email).then((res) => {
+          if (res.code == "200") {
+            this.$message.success("注册成功！点击邮件中的链接激活账号即可登录！");
+            LinkTo("/login", "replace");
           } else {
-            alert('请确保表单填写完整且格式正确!!');
-            return false;
+            this.$message.error(res.msg);
           }
         });
+      });
     },
   },
   created() {
-    console.log("register");
+
   },
 };
 </script>

@@ -1,7 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from 'views/home/Home.vue'
-import Profile from 'views/profile/Profile.vue'
+const Home = () => import('views/home/Home.vue')
+const Profile = () => import('views/profile/Profile.vue')
+const Login = () => import('views/login/Login.vue')
+const Register = () => import('views/register/Register.vue')
+const Activation = () => import("views/register/Activation.vue");
+const PostDetail = () => import('views/detail/PostDetail.vue')
+const Message = () => import('views/message/Message.vue')
 
 Vue.use(Router)
 // 解决Error: Avoided redundant navigation to current location路由重复报错
@@ -27,29 +32,31 @@ export default new Router({
   {
     path: '/profile/:userId',
     name: 'profile',
-    component: () => import('views/profile/Profile.vue')
+    component: Profile
   },
   {
     path: '/login',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ 'views/login/Login.vue')
+    component: Login
   },
   {
     path: '/register',
     name: 'register',
-    component: () => import('views/register/Register.vue')
+    component: Register
+  },
+  {
+    path: "/activation/:userId/:code",
+    name: "activation",
+    component: Activation
   },
   {
     path: '/detail/:postId',
     name: 'postDetail',
-    component: () => import('views/detail/PostDetail.vue')
+    component: PostDetail
   },
   {
     path: '/message',
     name: "message",
-    component: () => import('views/message/Message.vue')
+    component: Message
   }
   ]
 })

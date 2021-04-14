@@ -3,7 +3,6 @@ import qs from "qs"
 export function loginCheck(data) {
   const dataobj = {
     username: data.username,
-    // email: data.email,
     password: data.password,
     code: data.checkCode,  
   };
@@ -12,8 +11,6 @@ export function loginCheck(data) {
   return request({
     method: "post",
     url: "/login",
-    // withCredentials: true,
-    // data: dataobj,
     data: postData,
   });
 }

@@ -10,28 +10,28 @@ export function getUserInfo(userId){
 export function getMyPosts(userId){
   return request({
     method: "get",
-    url: "/myDiscussPosts/"+userId,
+    url: "/myDiscussPost/"+userId,
   })
 }
 
 export function getMyComments(userId){
   return request({
     method: "get",
-    url: "/myComments/"+userId,
+    url: "/replyPost/"+userId,
   })
 }
 
 export function getMyFans(userId){
   return request({
     method: "get",
-    url: "/myFollowers/"+userId,
+    url: "/followers/"+userId,
   })
 }
 
 export function getMyFollowees(userId){
   return request({
     method: "get",
-    url: "/myFollowees/"+userId,
+    url: "/followees/"+userId,
   })
 }
 
@@ -42,22 +42,30 @@ export function getMyThumbs(userId){
   })
 }
 
-export function follow(userId) {
+export function follow(entityId) {
+  const dataObj = {
+    entityType: 3,
+    entityId,
+  };
+  const formData = qs.stringify(dataObj);
+  const postData = { formData, $_isFormData: true };
   return request({
     method: "post",
-    url: "/profile/follow",
-    data: {
-      userId
-    }
+    url: "/follow",
+    data: postData
   })
 }
 
-export function unFollow(userId) {
+export function unFollow(entityId) {
+  const dataObj = {
+    entityType: 3,
+    entityId,
+  };
+  const formData = qs.stringify(dataObj);
+  const postData = { formData, $_isFormData: true };
   return request({
     method: "post",
-    url: "/profile/unFollow",
-    data: {
-      userId
-    }
+    url: "/unfollow",
+    data: postData
   })
 }

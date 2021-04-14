@@ -29,8 +29,8 @@
               </div>
             </div>
             <div class="profile-head-btn">
-              <template v-if="userInfo.id !== $store.state.user.id">
-                <el-button v-if="userInfo.hasFollowed" @click="clickUnFollow"
+              <template v-if="!isHimself">
+                <el-button v-if="hasFollowed" @click="clickUnFollow"
                   >取消关注</el-button
                 >
                 <el-button v-else @click="clickFollow">关注</el-button>
@@ -43,26 +43,26 @@
     <el-row class="profile-body-wrapper">
       <el-col :sm="{ span: 24, offset: 0 }" :md="{ span: 18, offset: 3 }">
         <el-tabs type="border-card">
-          <el-tab-pane :label="subject + '的帖子'">
-            <PostAboutMe v-for="item in myPosts" :key="item.id" :post="item" />
+          <el-tab-pane :label="subject + '的帖子(' + postNum + ')'">
+            <PostAboutMe v-for="item in myPosts" :key="item.post.id" :item="item" />
           </el-tab-pane>
-          <el-tab-pane :label="subject + '的评论'">
+          <el-tab-pane :label="subject + '的评论(' + commentNum + ')'">
             <Reply
               v-for="item in myComments"
-              :key="item.id"
-              :reply="item"
+              :key="item.comment.id"
+              :item="item"
               :subject="subject"
             />
           </el-tab-pane>
-          <el-tab-pane :label="subject + '的点赞'">
+          <!-- <el-tab-pane :label="subject + '的点赞(' + likeNum + ')'">
             <ThumbUp
               v-for="item in myThumbs"
               :key="item.id"
               :thumb="item"
               :subject="subject"
             />
-          </el-tab-pane>
-          <el-tab-pane :label="subject + '的关注'">
+          </el-tab-pane> -->
+          <el-tab-pane :label="subject + '的关注(' + followeeNum + ')'">
             <div class="profile-follow">
               <div
                 class="profile-follow-item"
@@ -75,7 +75,7 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane :label="subject + '的粉丝'">
+          <el-tab-pane :label="subject + '的粉丝(' + fansNum + ')'">
             <div class="profile-follow">
               <div
                 class="profile-follow-item"
@@ -130,11 +130,18 @@ export default {
         headerUrl: "",
         createTime: "",
       },
+      isHimself: false,
+      hasFollowed: false,
+      postNum: 0,
+      commentNum: 0,
+      likeNum: 0,
+      fansNum: 0,
+      followeeNum: 0,
       myPosts: [],
       myFollowees: [],
       myFans: [],
       myComments: [],
-      myThumbs: [],
+      // myThumbs: [],
     };
   },
   watch: {
@@ -146,24 +153,25 @@ export default {
     // 初始化页面数据
     initData() {
       this.id = this.$route.params.userId;
-      if (this.id === this.$store.state.user.id) {
-        this.subject = "我";
-      } else {
-        this.subject = "TA";
-      }
       this.getBasicInfo();
       this.getPosts();
       this.getFollowees();
       this.getFans();
-      this.getThumbs();
+      // this.getThumbs();
       this.getComments();
     },
     // 获取用户基本信息
     getBasicInfo() {
       const _this = this;
       getUserInfo(this.id).then((res) => {
-        if (res.code == "200") {
-          _this.userInfo = { ...res.data };
+        if (res.code === 200) {
+          _this.userInfo = res.data.user;
+          _this.hasFollowed = res.data.hasFollowed;
+          _this.isHimself = res.data.isHimself;
+          _this.likeNum = res.data.likeCount;
+          _this.fansNum = res.data.followerCount;
+          _this.followeeNum = res.data.followeeCount;
+          _this.subject = res.data.isHimself ? "我" : "TA";
         } else {
           _this.$message.error(res.msg);
         }
@@ -173,10 +181,10 @@ export default {
     getPosts() {
       const _this = this;
       getMyPosts(this.id).then((res) => {
-        if (res.code == "200") {
+        if (res.code === 200) {
           _this.myPosts = [];
-          console.log(res);
-          _this.myPosts.push(...res.data);
+          _this.myPosts.push(...res.data.discussPosts);
+          _this.postNum = res.data.totalPostSize;
         } else {
           _this.$message.error(res.msg);
         }
@@ -187,35 +195,36 @@ export default {
       const _this = this;
       getMyComments(this.id).then((res) => {
         console.log("comments", res);
-        if (res.code == "200") {
+        if (res.code === 200) {
           _this.myComments = [];
-          _this.myComments.push(...res.data);
+          _this.myComments.push(...res.data.replyPosts);
+          _this.commentNum = res.data.totalReplySize;
         } else {
           _this.$message.error(res.msg);
         }
       });
     },
     // 获取用户收到的赞
-    getThumbs() {
-      const _this = this;
-      getMyThumbs(this.id).then((res) => {
-        console.log("thumbs", res);
-        if (res.code == "200") {
-          _this.myThumbs = [];
-          _this.myThumbs.push(...res.data);
-        } else {
-          _this.$message.error(res.msg);
-        }
-      });
-    },
+    // getThumbs() {
+    //   const _this = this;
+    //   getMyThumbs(this.id).then((res) => {
+    //     console.log("thumbs", res);
+    //     if (res.code == "200") {
+    //       _this.myThumbs = [];
+    //       _this.myThumbs.push(...res.data);
+    //     } else {
+    //       _this.$message.error(res.msg);
+    //     }
+    //   });
+    // },
     // 获取用户粉丝
     getFans() {
       const _this = this;
       getMyFans(this.id).then((res) => {
         console.log("fans", res);
-        if (res.code == "200") {
+        if (res.code === 200) {
           _this.myFans = [];
-          _this.myFans.push(...res.data);
+          _this.myFans.push(...res.data.users);
         } else {
           _this.$message.error(res.msg);
         }
@@ -226,9 +235,9 @@ export default {
       const _this = this;
       getMyFollowees(this.id).then((res) => {
         console.log("follows", res);
-        if (res.code == "200") {
+        if (res.code === 200) {
           _this.myFollowees = [];
-          _this.myFollowees.push(...res.data);
+          _this.myFollowees.push(...res.data.users);
         } else {
           _this.$message.error(res.msg);
         }
@@ -238,8 +247,8 @@ export default {
     clickFollow() {
       const _this = this;
       follow(this.userInfo.id).then((res) => {
-        if (res.code == "200") {
-          _this.userInfo.hasFollowed = true;
+        if (res.code === 200) {
+          _this.hasFollowed = true;
           _this.$message.success("关注成功！");
         } else {
           _this.$message.error(res.msg);
@@ -250,8 +259,8 @@ export default {
     clickUnFollow() {
       const _this = this;
       unFollow(this.userInfo.id).then((res) => {
-        if (res.code == "200") {
-          _this.userInfo.hasFollowed = false;
+        if (res.code === 200) {
+          _this.hasFollowed = false;
           _this.$message.success("取关成功！");
         } else {
           _this.$message.error(res.msg);

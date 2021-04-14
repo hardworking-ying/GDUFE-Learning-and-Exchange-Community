@@ -76,14 +76,22 @@
             <div class="post-list-wrapper" ref="postList">
               <PostList :posts="postList" />
               <div class="load-more">
-                <el-pagination
+                <!-- <el-pagination
                   ref="pagination"
                   background
                   layout="prev, pager, next"
                   :total="page.total"
                   @current-change="changeCurrentPage"
                 >
-                </el-pagination>
+                </el-pagination> -->
+                <el-button
+                  class="load-more"
+                  type="primary"
+                  @click="loadMore"
+                  v-if="this.postList.length == 10"
+                  >加载更多</el-button
+                >
+                <p class="no-more-data" v-else>到底啦~</p>
               </div>
             </div>
           </div>
@@ -113,11 +121,8 @@
 import OrderDropdown from "./OrderDropdown";
 import PostList from "./PostList";
 import Editor from "components/Editor";
-import {
-  getAllPost,
-  releasePost
-} from "network/home";
-import { tagMixin } from "@/common/mixin"
+import { getAllPost, searchPost, releasePost } from "network/home";
+import { tagMixin } from "@/common/mixin";
 
 export default {
   name: "home",
@@ -135,13 +140,13 @@ export default {
       // 当前标签
       currentTagId: 0,
       // 分页
-      page: {
-        total: 0,
-        current: 1,
-        size: 10,
-      },
+      // page: {
+      //   total: 0,
+      //   current: 1,
+      //   size: 10,
+      // },
       // 排序类型
-      orderType: 0,
+      orderType: 0, // 0:最新 1:最热
     };
   },
   props: {
@@ -151,7 +156,8 @@ export default {
     // 监听搜索框变化
     keyword(newValue, oldValue) {
       // 重新获取数据
-      this.getAllPost();
+      let value = (typeof newValue)==="undefined" ? "":value;
+      this.searchPost(value);
     },
   },
   computed: {},
@@ -164,19 +170,28 @@ export default {
     // 获取帖子列表
     getAllPost() {
       const _this = this;
-      getAllPost({
-        keyword: this.keyword,
-        orderType: this.orderType,
-        current: this.page.current,
-        tag: this.currentTagId
-      }).then((res) => {
-        if (res.code === 200) {
-          _this.postList.push(...res.data.postList);
-          _this.page.total = res.data.total;
+      getAllPost(this.orderType).then((res) => {
+        if (res.code === "200") {
+          _this.postList = [];
+          _this.postList.push(...res.data.discussPosts);
         } else {
           _this.$message.error(res.msg);
         }
       });
+    },
+    // 搜索帖子
+    searchPost() {
+      searchPost(this.keyword).then(res => {
+        if(res.code==="200") {
+          this.postList = [];
+          this.postList.push(...res.data.discussPosts)
+        }else {
+          this.$message.error(res.msg);
+        }
+      })
+    },
+    loadMore() {
+      this.getAllPost();
     },
     // 点击发布主题
     clickReleasePost() {
@@ -185,19 +200,18 @@ export default {
     },
     // 选择排序方式
     selectOrderType(type) {
-      this.page.current = 1;
       this.orderType = type;
       this.getAllPost();
     },
     // 更换当前页
-    changeCurrentPage(current) {
-      this.page.current = current;
-      this.getAllPost();
-      this.$refs.postList.scrollTo(0, 0);
-    },
+    // changeCurrentPage(current) {
+    //   this.page.current = current;
+    //   this.getAllPost();
+    //   this.$refs.postList.scrollTo(0, 0);
+    // },
     // 进入用户主页
     goToHisPage(id) {
-      this.$router.push({ name: "profile", params: { userId: id }})
+      this.$router.push({ name: "profile", params: { userId: id } });
       console.log("点击了用户头像，即将跳转到id为" + id + "的用户的主页");
     },
     // 进入帖子详情
@@ -211,13 +225,13 @@ export default {
     // 发布帖子
     releasePost(post) {
       const _this = this;
-      releasePost(post).then(res => {
-        if(res.code===200) {
-          _this.$message.success(res.message);
-        }else {
+      releasePost(post).then((res) => {
+        if (res.code === 200) {
+          _this.$message.success(res.msg);
+        } else {
           _this.$message.error(res.msg);
         }
-      })
+      });
     },
   },
   created() {
@@ -236,7 +250,7 @@ export default {
     this.$bus.$off("toHisPage");
     this.$bus.$on("toPostDetail");
   },
-  mixins: [ tagMixin ]
+  mixins: [tagMixin],
 };
 </script>
 <style lang="less">
@@ -331,6 +345,11 @@ export default {
         .load-more {
           width: 100%;
           margin: 30px 0 20px;
+          text-align: center;
+        }
+        .no-more-data {
+          padding: 20px 0;
+          color: #777;
           text-align: center;
         }
       }

@@ -1,88 +1,101 @@
 import { request } from "./request"
 export function getPostDetail(id) {
   return request({
-    url: "/discuss/detail/" + id,
+    url: "/detail/" + id,
     method: "get",
   })
 }
 
 export function delPostSelf(id) {
+  const dataObj = {postId: id};
+  const formData = qs.stringify(dataObj);
+  const postData = {formData, $_isFormData: true};
   return request({
-    url: "/discuss/detail/delPostSelf",
+    url: "/delete",
     method: "post",
-    data: {
-      postId: id
-    }
+    data: postData
   })
 }
 
-export function delPostByAdmin(data) {
+export function delPostByAdmin(id) {
+  const dataObj = {postId: id};
+  const formData = qs.stringify(dataObj);
+  const postData = {formData, $_isFormData: true};
   return request({
-    url: "/discuss/detail/delPostAdmin",
+    url: "/delete",
     method: "post",
-    data
+    data: postData
   })
 }
 
 export function like(data) {
+  const formData = qs.stringify(data);
+  const postData = {formData, $_isFormData: true};
   return request({
-    url: "/discuss/detail/like",
+    url: "/like",
     method: "post",
-    data
+    data: postData
   })
 }
 
-export function unLike(data) {
+export function addComment(data, discussPostId) {
+  const formData = qs.stringify(data);
+  const postData = {formData, $_isFormData: true};
   return request({
-    url: "/discuss/detail/unlike",
+    url: "/add/"+ discussPostId,
     method: "post",
-    data
-  })
-}
-
-export function reply(id) {
-  return request({
-    url: "/discuss/detail/reply",
-    method: "post",
-    data: {
-      postId: id
-    }
+    data: postData
   })
 }
 
 export function setTop(id) {
+  const dataObj = {postId: id};
+  const formData = qs.stringify(dataObj);
+  const postData = {formData, $_isFormData: true};
   return request({
-    url: "/discuss/detail/setTop",
+    url: "/top",
     method: "post",
-    data: {
-      postId: id
-    }
+    data: postData
   })
 }
+
 export function unSetTop(id) {
+  const dataObj = {postId: id};
+  const formData = qs.stringify(dataObj);
+  const postData = {formData, $_isFormData: true};
   return request({
-    url: "/discuss/detail/unSetTop",
+    url: "/unTop",
     method: "post",
-    data: {
-      postId: id
-    }
+    data: postData
   })
 }
 export function setWonderful(id) {
+  const dataObj = {postId: id};
+  const formData = qs.stringify(dataObj);
+  const postData = {formData, $_isFormData: true};
   return request({
-    url: "/discuss/detail/setWonderful",
+    url: "/wonderful",
     method: "post",
-    data: {
-      postId: id
-    }
+    data: postData
   })
 }
 export function unSetWonderful(id) {
+  const dataObj = {postId: id};
+  const formData = qs.stringify(dataObj);
+  const postData = {formData, $_isFormData: true};
   return request({
-    url: "/discuss/detail/unSetWonderful",
+    url: "/unWonderful",
     method: "post",
-    data: {
-      postId: id
-    }
+    data: postData
+  })
+}
+
+export function modifyPost(data) {
+  const formData = qs.stringify(data);
+  const postData = { formData, $_isFormData: true };
+  return request({
+    method: "POST",
+    url: "/modify",
+    data: postData
   })
 }

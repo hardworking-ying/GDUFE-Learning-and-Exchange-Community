@@ -100,6 +100,7 @@ export default {
       type: Object,
       default() {
         return {
+          discussPostId: -1,
           tag: "",
           title: "",
           content: "",

@@ -47,8 +47,8 @@
 <script>
 import CommonForm from "components/CommonForm";
 import { loginCheck } from "network/login";
-import CryptoJS from "crypto-js";
 import { getUserInfo } from "network/store.js" 
+import CryptoJS from "crypto-js";
 
 const SECRET = "GDUFESECRETKEY520100";
 export default {
@@ -115,14 +115,14 @@ export default {
               setTimeout(() => {
                 _this.$router.replace("/home");
               }, 500);
-            } else if (res.code == "2006") {
+            } else if (res.code == "2010") {
               // 刷新化验证码
               _this.refreshKaptcha();
               _this.$message({
                 message: res.msg + " 请重新输入!",
                 type: "error",
               });
-            } else if (res.code == "2007") {
+            } else if (res.code == "2011") {
               // 刷新化验证码
               _this.refreshKaptcha();
               _this.$message({
@@ -130,7 +130,6 @@ export default {
                 type: "error",
               });
             } else if (res.code == "500") {
-              console.log("500");
               _this.refreshKaptcha();
               _this.$message({
                 message: res.msg + " 服务器异常！请稍后再试！",
@@ -181,10 +180,6 @@ export default {
       this.$cookies.remove("password");
       this.$cookies.remove("remember");
     },
-    // 请求用户信息
-    getUserInfo() {
-      
-    }
   },
   created() {
     this.getAccountCookie();

@@ -2,7 +2,10 @@
   <div class="post-item">
     <div class="item-header">
       <div class="author-info">
-        <router-link :to="'/profile/' + user.id" :title="'去'+user.username+'的主页'">
+        <router-link
+          :to="'/profile/' + user.id"
+          :title="'去' + user.username + '的主页'"
+        >
           <img :src="user.headerUrl" alt="" class="author-avatar" />
           <span class="author-name">{{ user.username }}</span>
         </router-link>
@@ -25,18 +28,18 @@
       </li> -->
       <li class="control-like">
         <i
-          v-if="post.likeStatus == 0"
+          v-if="likeStatus == 0"
           class="fa fa-heart-o"
           title="点赞"
-          @click="clickLike"
+          @click="clickLike(type, post.id, user.id, postId)"
         ></i>
         <i
           v-else
           class="fa fa-heart liked"
           title="取消点赞"
-          @click="clickUnLike"
+          @click="clickLike(type, post.id, user.id, postId)"
         ></i>
-        {{ post.likeCount == 0 ? "" : post.likeCount }}
+        {{ likeCount == 0 ? "" : likeCount }}
       </li>
       <li class="control-reply" @click="clickReply(post.id, user)">
         <i class="fa fa-reply" title="回复"></i>
@@ -44,11 +47,14 @@
       </li>
     </ul>
     <PostItem
-      v-for="(item, index) in comments"
-      :key="index"
+      v-for="item in comments"
+      :key="item.comment.id"
       :post="item.comment"
       :user="item.user"
-      :comments="item.comments"
+      :comments="item.replies"
+      :likeCount="item.likeCount"
+      :likeStatus="item.likeStatus"
+      :type="2"
     >
       <template v-slot:targetUser>
         <el-tooltip class="target" effect="light" placement="top-start">
@@ -62,11 +68,13 @@
 </template>
 
 <script>
-import { like, unLike } from "network/detail";
+import { like } from "network/detail";
 export default {
   name: "PostItem",
   data() {
-    return {};
+    return {
+      postId: -1,
+    };
   },
   props: {
     post: {
@@ -87,36 +95,42 @@ export default {
         return [];
       },
     },
+    likeCount: {
+      type: Number,
+      default: 0,
+    },
+    likeStatus: {
+      type: Number,
+      default: 0,
+    },
+    type: {
+      type: Number,
+      default: 1,
+    }
   },
-  created() {},
-  mounted() {},
+
   methods: {
     clickReply() {
       this.$bus.$emit(
         "clickReply",
+        type,
         this.post.id,
         this.user.id,
         this.user.username
       );
     },
-    clickLike() {
+    clickLike(entityType, entityId, entityUserId, postId) {
       const _this = this;
-      like({ id: this.post.id, targetUserId: this.user.id }).then((res) => {
+      like({
+        entityType,
+        entityId,
+        entityUserId,
+        postId,
+      }).then((res) => {
         console.log(res);
-        if (res.code == "200") {
-          _this.post.likeStatus = _this.post.likeStatus === 0 ? 1 : 0;
-          _this.post.likeCount = res.data;
-        } else {
-          _this.$message.error(res.data.msg);
-        }
-      });
-    },
-    clickUnLike() {
-      const _this = this;
-      unLike({ id: this.post.id, targetUserId: this.user.id }).then((res) => {
-        if (res.code == "200") {
-          _this.post.likeStatus = _this.post.likeStatus === 0 ? 1 : 0;
-          _this.post.likeCount = res.data;
+        if (res.code === 200) {
+          _this.post.likeStatus = res.data.likeStatus;
+          _this.post.likeCount = res.data.likeCount;
         } else {
           _this.$message.error(res.msg);
         }
@@ -126,6 +140,10 @@ export default {
       console.log("点击删除", this.post.id, this.user.id);
     },
   },
+  created() {
+    this.postId = this.$route.params.postId;
+  },
+  mounted() {},
 };
 </script>
 

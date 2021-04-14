@@ -1,39 +1,37 @@
 <template>
   <div class="replyPost">
-    <div class="post-body" @click="toDetail(post.id)">
-      <div class="post-title">{{ post.title }}</div>
+    <div class="post-body" @click="toDetail(item.post.id)">
+      <div class="post-title">{{ item.post.title }}</div>
       <div class="post-tag-date clearfix">
-        <div class="post-tag">{{ post.tag }}</div>
-        <div class="post-date">{{ post.createTime }}</div>
+        <div class="post-tag">{{ item.post.tag }}</div>
+        <div class="post-date">{{ item.post.createTime }}</div>
       </div>
-      <div class="post-content">{{ post.content }}</div>
+      <div class="post-content">{{ item.post.content }}</div>
     </div>
-    <!-- <div class="delete-btn" @click="deletePost">
-      <i class="el-icon-delete"></i>
-    </div> -->
+    <div class="like-count">
+      <i class="fa fa-heart-o"></i>{{ item.likeCount }}
+    </div>
   </div>
 </template>
 
 <script>
-// import { LinkTo } from "@/assets/utils/baseUtil";
+import { LinkTo } from "assets/util";
 export default {
   name: "PostAboutMe",
   props: {
-    canDelete: false,
-    post: {
+    item: {
       type: Object,
       default() {
-        return {};
+        return {
+          post: {},
+          likeCount: 0,
+        };
       },
     },
   },
   methods: {
-    // LinkTo,
-    deletePost() {
-      this.$emit("deletePost");
-    },
     toDetail(id) {
-      this.$router.push("/detail/" + id);
+      LinkTo("/detail/"+id, "push");
     },
   },
 };
@@ -90,7 +88,7 @@ export default {
       overflow: hidden;
     }
   }
-  .delete-btn {
+  .like-count {
     position: absolute;
     right: 20px;
     bottom: 10px;

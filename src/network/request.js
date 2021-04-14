@@ -1,12 +1,12 @@
 import axios from "axios";
 import Vue from "vue";
-import store from "../store";
+import qs from "qs";
 axios.defaults.withCredentials = true;
 var loading;
 export function request(config) {
   // 基本配置信息
   const instance = axios.create({
-    // baseURL: store.state.baseURL,
+    baseURL: store.state.baseURL,
     timeout: 5000
   });
 
@@ -25,11 +25,9 @@ export function request(config) {
       if (config.method == "post") {
         if (config.data && config.data.$_isFormData === false) {
           // config.headers["Content-Type"] = "application/json";
-          console.log("1");
           config.data = config.data.dataobj;
         } else {
           // config.headers["Content-Type"] = "multipart/form-data";
-          console.log("2");
           config.data = config.data.formData;
         }
       }
@@ -45,7 +43,6 @@ export function request(config) {
   // 响应拦截
   instance.interceptors.response.use(
     res => {
-      // console.log(res);
       loading.close();
       return res.data;
     },
@@ -53,9 +50,6 @@ export function request(config) {
       loading.close();
       Vue.prototype.$message.error("加载失败！");
       let error = "获取响应失败：真的获取不到数据啊！我哭了！\n" + "错误信息:" + err;
-      // console.log(
-      //   "获取响应失败：真的获取不到数据啊！我哭了！\n" + "错误信息:" + err
-      // );
       return Promise.reject(error)
     }
   );

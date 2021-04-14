@@ -20,7 +20,7 @@
             <template v-if="$store.state.user.type === 1">
               <li>
                 <el-button
-                  v-if="post.post.isTop === 0"
+                  v-if="post.post.type === 0"
                   type="primary"
                   @click.native="clickSetTop"
                   >置顶</el-button
@@ -31,7 +31,7 @@
               </li>
               <li>
                 <el-button
-                  v-if="post.post.isWonderful === 0"
+                  v-if="post.post.status === 0"
                   type="primary"
                   @click.native="clickSetGood"
                   >加精</el-button
@@ -65,6 +65,9 @@
             :post="post.post"
             :user="post.user"
             :comments="post.comments"
+            :likeCount="post.likeCount"
+            :likeStatus="post.likeStatus"
+            :type="1"
           >
             <template v-slot:authorFlag>
               <div class="author-flag">楼主</div>
@@ -76,11 +79,11 @@
     <transition>
       <Editor
         :isPost="editType === 0"
-        :targetUser="replyTarget.targetUsername"
+        :targetUser="replyTargetName"
         :originalPost="originalPost"
         v-if="showEditor"
         @closeEditor="hideEditor"
-        @releasePost="releasePost"
+        @releasePost="modifyPost"
         @releaseComment="releaseComment"
       />
     </transition>
@@ -112,10 +115,12 @@ import {
   delPostByAdmin,
   like,
   unLike,
-  reply,
   setTop,
   setWonderful,
+  modifyPost,
+  addComment
 } from "network/detail";
+import { LinkTo } from "assets/util";
 
 export default {
   name: "PostDetail",
@@ -129,6 +134,8 @@ export default {
       post: {
         post: {},
         user: {},
+        likeCount: 0,
+        likeStatus: 0,
         comments: [],
       },
       showEditor: false,
@@ -136,10 +143,11 @@ export default {
       delReason: "",
       editType: 0, // 0:帖子 1:评论
       replyTarget: {
-        targetId: 0,
-        targetUserId: 0,
-        targetUsername: "",
+        entityType: 1,
+        entityId: -1,
+        targetId: -1,
       },
+      replyTargetName: "",
       originalPost: {
         tag: "",
         title: "",
@@ -154,7 +162,11 @@ export default {
       const _this = this;
       getPostDetail(this.postId).then((res) => {
         if (res.code === 200) {
-          _this.post = res.data;
+          _this.post.post = res.data.post;
+          _this.post.user = res.data.user;
+          _this.post.comments = res.data.comments;
+          _this.post.likeCount = res.data.likeCount;
+          _this.post.likeStatus = res.data.likeStatus;
         } else {
           _this.$message.error(res.msg);
         }
@@ -163,9 +175,9 @@ export default {
     // 点击回复按钮
     clickReply() {
       this.editType = 1;
-      this.replyTarget.targetId = this.post.post.id;
-      this.replyTarget.targetUserId = this.post.user.id;
-      this.replyTarget.targetUsername = this.post.user.username;
+      this.replyTarget.entityId = this.post.post.id;
+      this.replyTarget.targetId = this.post.user.id;
+      this.replyTargetName = this.post.user.username;
       this.showEditor = true;
       console.log("点击了回复");
     },
@@ -187,8 +199,8 @@ export default {
     },
     setTop() {
       setTop(this.post.post.id).then((res) => {
-        if (res.code == "200") {
-          _this.post.post.status = 1;
+        if (res.code === 200) {
+          _this.post.post.type = 1;
         } else {
           _this.$messgae.error(res.msg);
         }
@@ -212,8 +224,8 @@ export default {
     },
     unSetTop() {
       unSetTop(this.post.post.id).then((res) => {
-        if (res.code == "200") {
-          _this.post.post.status = 1;
+        if (res.code === 200) {
+          _this.post.post.type = 0;
         } else {
           _this.$messgae.error(res.msg);
         }
@@ -237,8 +249,8 @@ export default {
     setGood() {
       const _this = this;
       setWonderful(this.post.post.id).then((res) => {
-        if (res.code == "200") {
-          _this.post.post.status = 2;
+        if (res.code === 200) {
+          _this.post.post.status = 1;
         } else {
           _this.$messgae.error(res.msg);
         }
@@ -262,8 +274,8 @@ export default {
     unSetGood() {
       const _this = this;
       unSetWonderful(this.post.post.id).then((res) => {
-        if (res.code == "200") {
-          _this.post.post.status = 2;
+        if (res.code === 200) {
+          _this.post.post.status = 0;
         } else {
           _this.$messgae.error(res.msg);
         }
@@ -287,9 +299,11 @@ export default {
     delPostSelf() {
       const _this = this;
       delPostSelf(id).then((res) => {
-        if (res.code == "200") {
-          // _this.$message.success()
-          _this.$router.go(-1);
+        if (res.code === 200) {
+          _this.post.post.status = 2;
+          LinkTo("/home", "replace");
+        }else {
+          _this.$message.error(res.msg);
         }
       });
     },
@@ -303,14 +317,15 @@ export default {
         this.$message.error("请输入删除理由！");
         return false;
       }
-      delPostByAdmin({
-        postId: this.post.post.id,
-        reason: this.delReason,
-      }).then((res) => {
-        if (res.code == "200") {
+      // {
+      //   postId: this.post.post.id,
+      //   reason: this.delReason,
+      // }
+      delPostByAdmin(this.post.post.id).then((res) => {
+        if (res.code === 200) {
           _this.showDelTip = false;
           _this.delReason = "";
-          _this.$router.go(-1);
+          LinkTo("/home", "replace")
         } else {
           _this.$message.error(res.msg);
         }
@@ -324,14 +339,34 @@ export default {
     hideEditor() {
       this.showEditor = false;
     },
-    // 发布帖子
-    releasePost(post) {
-      console.log("编辑帖子", post);
+    // 编辑帖子
+    modifyPost(post) {
+      const _this = this;
+      modifyPost({
+        discussPostId: this.postId,
+        ...post
+      }).then(res => {
+        if(res.code===200) {
+          _this.$message.success("修改成功！");
+          _this.getPostData();
+        }else {
+          _this.$message.error(res.msg);
+        }
+      })
     },
     //发布评论
     releaseComment(comment) {
-      console.log(this.replyTarget);
-      console.log("发布评论", comment);
+      this.replyTarget.content = comment;
+      console.log("发布评论", this.replyTarget);     
+      const _this = this;
+      addComment(this.replyTarget, this.postId).then(res => {
+        if(res.code===200) {
+          _this.$message.success("评论成功！");
+          _this.getPostData();
+        }else {
+          _this.$message.error(res.msg);
+        }
+      })
     },
     // 点击编辑
     clickEdit() {
@@ -353,10 +388,11 @@ export default {
     this.getPostData();
   },
   mounted() {
-    this.$bus.$on("clickReply", (targetId, targetUserId, targetUsername) => {
-      this.replyTarget.targetId = targetId;
-      this.replyTarget.targetUserId = targetUserId;
-      this.replyTarget.targetUsername = targetUsername;
+    this.$bus.$on("clickReply", (entityType, targetId, targetUserId, targetUsername) => {
+      this.replyTarget.entityType = entity;
+      this.replyTarget.entityId = targetId;
+      this.replyTarget.targetId = targetUserId;
+      this.replyTargetName = targetUsername;
       this.editType = 1;
       this.showEditor = true;
     });

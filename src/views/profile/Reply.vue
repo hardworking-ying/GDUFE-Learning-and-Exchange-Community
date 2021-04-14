@@ -2,17 +2,14 @@
   <div class="reply">
     <div class="reply-title">
       {{ subject }} 回复了
-      <router-link :to="'/detail/' + reply.targetId"
-        >{{ reply.targetUsername }}的{{ reply.targetTypeName }}</router-link
+      <router-link :to="'/detail/' + item.post.id"
+        > 帖子:{{ item.post.title }} {{ item.comment.entityType===1? "":"的评论" }}</router-link
       >
     </div>
     <div class="reply-content">
-      回复 @ {{ reply.targetUsername }}: {{ reply.replyContent }}
+      回复: {{ item.comment.content }}
     </div>
-    <div class="target-content">
-      {{ reply.targetUsername }}: {{ reply.originalContent }}
-    </div>
-    <div class="reply-time"> {{ reply.createTime }}</div>
+    <div class="reply-time"> {{ item.comment.createTime }}</div>
   </div>
 </template>
 
@@ -20,21 +17,12 @@
 export default {
   name: "Reply",
   props: {
-    reply: {
+    item: {
       type: Object,
       default() {
         return {
-          id: -1,
-          userId: -1,
-          username: "",
-          targetId: -1,
-          targetUserId: -1,
-          targetUsername: "",
-          targetType: 1,
-          targetTypeName: "评论",
-          replyContent: "",
-          originalContent: "",
-          createTime: ""
+          comment: {},
+          post: {}
         }
       }
     },
@@ -64,7 +52,7 @@ export default {
   > .reply-title {
     font-size: 16px;
   }
-  > .target-content {
+  > .reply-content {
     padding: 8px;
     background-color: #eee;
     border-left: 2px solid #aaa;

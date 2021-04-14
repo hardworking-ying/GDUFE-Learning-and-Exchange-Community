@@ -1,29 +1,40 @@
 import {request} from './request'
+import qs from "qs"
 
 export function getTagList() {
   return request({
-    method: "GET",
+    method: "get",
     url: "/getTagList",
   })
 }
 
-export function getAllPost(data) {
+export function getAllPost(orderMode) {
   return request({
-    method: "GET",
-    url: "/getAllPost",
+    method: "get",
+    url: "/index",
     params: {
-      keyword: data.keyword || "",
-      orderType: data.orderType || 0,
-      tag: data.tag || 0,
-      current: data.current || 1
+      orderMode
+    }
+  })
+}
+
+export function searchPost(keyword) {
+  return request({
+    method: "get",
+    url: "/search",
+    params: {
+      keyword
     }
   })
 }
 
 export function releasePost(data) {
+  const formData = qs.stringify(data);
+  const postData = { formData, $_isFormData: true }
   return request({
     method: "POST",
-    url: "/releasePost",
-    data
+    url: "/add",
+    data: postData
   })
 }
+
