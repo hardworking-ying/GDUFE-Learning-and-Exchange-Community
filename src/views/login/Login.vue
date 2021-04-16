@@ -46,7 +46,7 @@
 
 <script>
 import CommonForm from "components/CommonForm";
-import { loginCheck } from "network/login";
+import { loginCheck, getKaptcha } from "network/login";
 import { getUserInfo } from "network/store.js" 
 import CryptoJS from "crypto-js";
 
@@ -145,6 +145,7 @@ export default {
     // 刷新验证码
     refreshKaptcha() {
       this.kaptcha = this.$store.state.baseURL + "/kaptcha?p=" + Math.random();
+      //console.log("hh",this.kaptcha)
     },
     // 将密码信息保存至cookie
     setAccountCookie() {
@@ -180,8 +181,14 @@ export default {
       this.$cookies.remove("password");
       this.$cookies.remove("remember");
     },
+    getKaptcha() { 
+      getKaptcha().then((res) => {
+        console.log(res);
+      })
+    }
   },
   created() {
+    this.getKaptcha();
     this.getAccountCookie();
     this.refreshKaptcha();
   },

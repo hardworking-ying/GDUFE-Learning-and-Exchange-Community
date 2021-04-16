@@ -13,7 +13,7 @@ export default new Vuex.Store({
       headerUrl: "",
       createTime: "",
     },
-    baseURL: "http://localhost:8080/community",
+    baseURL: "http://10.101.188.98:9006/community",
   },
   getters: {
 

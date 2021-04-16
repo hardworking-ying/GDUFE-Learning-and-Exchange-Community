@@ -8,9 +8,17 @@ export function loginCheck(data) {
   };
   const formData = qs.stringify(dataobj)
   const postData = { formData, $_isFormData: true }
+  console.log(111, postData);
   return request({
     method: "post",
-    url: "/login",
+    url: "/community/login",
     data: postData,
   });
+}
+
+export function getKaptcha() {
+  return request({
+    method: "get",
+    url: "/community/kaptcha"
+  })
 }
