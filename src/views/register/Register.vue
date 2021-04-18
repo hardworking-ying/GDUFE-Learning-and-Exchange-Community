@@ -122,7 +122,8 @@ export default {
         if (!valid) return false;
         let { username, email, password, confirmPwd } = this.registerForm;
         sendRegister(username, password, email).then((res) => {
-          if (res.code == "200") {
+          console.log('注册返回',res);
+          if (res.code === 200) {
             this.$message.success("注册成功！点击邮件中的链接激活账号即可登录！");
             LinkTo("/login", "replace");
           } else {

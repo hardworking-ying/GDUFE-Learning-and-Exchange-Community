@@ -1,7 +1,8 @@
 import { request } from "./request"
+import qs from "qs"
 export function getPostDetail(id) {
   return request({
-    url: "/detail/" + id,
+    url: "/community/discuss/detail/" + id,
     method: "get",
   })
 }
@@ -11,7 +12,7 @@ export function delPostSelf(id) {
   const formData = qs.stringify(dataObj);
   const postData = {formData, $_isFormData: true};
   return request({
-    url: "/delete",
+    url: "/community/delete",
     method: "post",
     data: postData
   })
@@ -22,7 +23,7 @@ export function delPostByAdmin(id) {
   const formData = qs.stringify(dataObj);
   const postData = {formData, $_isFormData: true};
   return request({
-    url: "/delete",
+    url: "/community/delete",
     method: "post",
     data: postData
   })
@@ -32,7 +33,7 @@ export function like(data) {
   const formData = qs.stringify(data);
   const postData = {formData, $_isFormData: true};
   return request({
-    url: "/like",
+    url: "/community/like",
     method: "post",
     data: postData
   })
@@ -42,7 +43,7 @@ export function addComment(data, discussPostId) {
   const formData = qs.stringify(data);
   const postData = {formData, $_isFormData: true};
   return request({
-    url: "/add/"+ discussPostId,
+    url: "/community/comment/add/"+ discussPostId,
     method: "post",
     data: postData
   })
@@ -53,7 +54,7 @@ export function setTop(id) {
   const formData = qs.stringify(dataObj);
   const postData = {formData, $_isFormData: true};
   return request({
-    url: "/top",
+    url: "/community/top",
     method: "post",
     data: postData
   })
@@ -64,7 +65,7 @@ export function unSetTop(id) {
   const formData = qs.stringify(dataObj);
   const postData = {formData, $_isFormData: true};
   return request({
-    url: "/unTop",
+    url: "/community/unTop",
     method: "post",
     data: postData
   })
@@ -74,7 +75,7 @@ export function setWonderful(id) {
   const formData = qs.stringify(dataObj);
   const postData = {formData, $_isFormData: true};
   return request({
-    url: "/wonderful",
+    url: "/community/wonderful",
     method: "post",
     data: postData
   })
@@ -84,7 +85,7 @@ export function unSetWonderful(id) {
   const formData = qs.stringify(dataObj);
   const postData = {formData, $_isFormData: true};
   return request({
-    url: "/unWonderful",
+    url: "/community/unWonderful",
     method: "post",
     data: postData
   })
@@ -95,7 +96,7 @@ export function modifyPost(data) {
   const postData = { formData, $_isFormData: true };
   return request({
     method: "POST",
-    url: "/modify",
+    url: "/community/modify",
     data: postData
   })
 }

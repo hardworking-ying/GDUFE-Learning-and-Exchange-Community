@@ -27,7 +27,9 @@ export default {
   watch: {},
   computed: {},
   methods: {},
-  created() {},
+  created() {
+    this.userId = this.$route.params;
+  },
   mounted() {
     const { userId, code } = this.$route.params;
     const _this = this;

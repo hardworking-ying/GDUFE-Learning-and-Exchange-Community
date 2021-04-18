@@ -10,6 +10,7 @@
                 action="#"
                 :show-file-list="false"
                 :on-success="handleAvatarSuccess"
+                :disabled="isHimself"
               >
                 <img :src="userInfo.headerUrl" class="avatar" />
               </el-upload>
@@ -109,6 +110,7 @@ import {
   follow,
   unFollow,
 } from "network/profile";
+import LoginVue from '../login/Login.vue';
 
 export default {
   name: "Profile",
@@ -164,6 +166,7 @@ export default {
     getBasicInfo() {
       const _this = this;
       getUserInfo(this.id).then((res) => {
+        console.log("个人信息",res);
         if (res.code === 200) {
           _this.userInfo = res.data.user;
           _this.hasFollowed = res.data.hasFollowed;
@@ -171,6 +174,7 @@ export default {
           _this.likeNum = res.data.likeCount;
           _this.fansNum = res.data.followerCount;
           _this.followeeNum = res.data.followeeCount;
+          console.log('dddd', _this.followeeNum);
           _this.subject = res.data.isHimself ? "我" : "TA";
         } else {
           _this.$message.error(res.msg);
@@ -184,7 +188,8 @@ export default {
         if (res.code === 200) {
           _this.myPosts = [];
           _this.myPosts.push(...res.data.discussPosts);
-          _this.postNum = res.data.totalPostSize;
+          _this.postNum = res.data.page.recordTotal;
+          console.log(_this.postNum);
         } else {
           _this.$message.error(res.msg);
         }
@@ -198,7 +203,7 @@ export default {
         if (res.code === 200) {
           _this.myComments = [];
           _this.myComments.push(...res.data.replyPosts);
-          _this.commentNum = res.data.totalReplySize;
+          _this.commentNum = res.data.totalPostSize;
         } else {
           _this.$message.error(res.msg);
         }
@@ -249,6 +254,7 @@ export default {
       follow(this.userInfo.id).then((res) => {
         if (res.code === 200) {
           _this.hasFollowed = true;
+          console.log("aaa");
           _this.$message.success("关注成功！");
         } else {
           _this.$message.error(res.msg);

@@ -10,7 +10,7 @@
             <i class="fa fa-reply" aria-hidden="true"></i> {{ targetUser }}
           </div>
           <div class="tag-and-title" v-else>
-            <el-select v-model="editInfo.tag" placeholder="添加标签">
+            <!-- <el-select v-model="editInfo.tag" placeholder="添加标签">
               <el-option
                 v-for="item in tagList"
                 :key="item.id"
@@ -25,7 +25,7 @@
                   <i :class="item.icon"></i><span>{{ item.name }}</span>
                 </div>
               </el-option>
-            </el-select>
+            </el-select> -->
             <el-input
               placeholder="请输入标题"
               v-model="editInfo.title"
@@ -86,7 +86,7 @@ export default {
   data() {
     return {
       editInfo: {
-        tag: this.originalPost.tag,
+        // tag: this.originalPost.tag,
         title: this.originalPost.title,
         content: this.originalPost.content,
       },
@@ -149,10 +149,11 @@ export default {
     },
     release() {
       if (this.isPost) {
-        if (this.editInfo.tag === "") {
-          this.$message.error("请选择帖子标签!");
-          return;
-        } else if (this.editInfo.title === "") {
+        // if (this.editInfo.tag === "") {
+        //   this.$message.error("请选择帖子标签!");
+        //   return;
+        // } else 
+        if (this.editInfo.title === "") {
           this.$message.error("标题不能为空！");
           return;
         } else if (this.editInfo.content === "") {
@@ -173,7 +174,7 @@ export default {
       }
     },
     clearEditor() {
-      this.editInfo.tag = "";
+      // this.editInfo.tag = "";
       this.editInfo.title = "";
       this.editInfo.content = "";
     },

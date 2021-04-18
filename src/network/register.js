@@ -11,13 +11,13 @@ export function sendRegister(username, password, email) {
   const postData = { formData, $_isFormData: true };
   return request({
     method: "post",
-    url: "/register",
+    url: "/community/register",
     data: postData
   });
 }
 
 export function registerConfirm(userId, code) {
   return request({
-    url: "/activation/" + userId + "/" + code,
+    url: "/community/activation/" + userId + "/" + code,
   })
 }

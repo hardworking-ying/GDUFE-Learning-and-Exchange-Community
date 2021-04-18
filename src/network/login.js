@@ -10,7 +10,14 @@ export function loginCheck(data) {
   const postData = { formData, $_isFormData: true }
   return request({
     method: "post",
-    url: "/login",
+    url: "/community/login",
     data: postData,
   });
+}
+
+export function getKaptcha() {
+  return request({
+    method: "get",
+    url: "/community/kaptcha",
+  })
 }

@@ -13,7 +13,8 @@ export default new Vuex.Store({
       headerUrl: "",
       createTime: "",
     },
-    baseURL: "http://localhost:8080/community",
+    // baseURL: "http://localhost:8080/community",
+    baseURL: "http://192.168.43.77:8080/community",
   },
   getters: {
 
@@ -33,6 +34,7 @@ export default new Vuex.Store({
     },
     initUser(state, playLoad) {
       state.user = playLoad.user;
+      console.log("111", state.user);
     } 
   },
   actions: {

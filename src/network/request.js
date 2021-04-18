@@ -1,13 +1,14 @@
 import axios from "axios";
 import Vue from "vue";
+import store from "../store";
 import qs from "qs";
 axios.defaults.withCredentials = true;
 var loading;
 export function request(config) {
   // 基本配置信息
   const instance = axios.create({
-    baseURL: store.state.baseURL,
-    timeout: 5000
+    // baseURL: store.state.baseURL,
+    timeout: 15000
   });
 
   // 请求拦截

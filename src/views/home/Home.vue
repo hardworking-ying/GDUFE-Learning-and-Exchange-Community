@@ -76,22 +76,24 @@
             <div class="post-list-wrapper" ref="postList">
               <PostList :posts="postList" />
               <div class="load-more">
-                <!-- <el-pagination
+                <el-pagination
                   ref="pagination"
                   background
                   layout="prev, pager, next"
                   :total="page.total"
+                  :page-size="page.size"
+                  :current-page="page.current"
                   @current-change="changeCurrentPage"
                 >
-                </el-pagination> -->
-                <el-button
+                </el-pagination>
+                <!-- <el-button
                   class="load-more"
                   type="primary"
                   @click="loadMore"
                   v-if="this.postList.length == 10"
                   >加载更多</el-button
                 >
-                <p class="no-more-data" v-else>到底啦~</p>
+                <p class="no-more-data" v-else>到底啦~</p> -->
               </div>
             </div>
           </div>
@@ -122,7 +124,7 @@ import OrderDropdown from "./OrderDropdown";
 import PostList from "./PostList";
 import Editor from "components/Editor";
 import { getAllPost, searchPost, releasePost } from "network/home";
-import { tagMixin } from "@/common/mixin";
+// import { tagMixin } from "@/common/mixin";
 
 export default {
   name: "home",
@@ -140,11 +142,11 @@ export default {
       // 当前标签
       currentTagId: 0,
       // 分页
-      // page: {
-      //   total: 0,
-      //   current: 1,
-      //   size: 10,
-      // },
+      page: {
+        total: 0,
+        current: 1,
+        size: 10,
+      },
       // 排序类型
       orderType: 0, // 0:最新 1:最热
     };
@@ -170,10 +172,16 @@ export default {
     // 获取帖子列表
     getAllPost() {
       const _this = this;
-      getAllPost(this.orderType).then((res) => {
-        if (res.code === "200") {
+      getAllPost({
+        currentPage: this.page.current,
+        pageSize: this.page.size,
+        orderMode: this.orderType
+      }).then((res) => {
+        console.log(res);
+        if (res.code === 200) {
           _this.postList = [];
           _this.postList.push(...res.data.discussPosts);
+          _this.page.total = res.data.page.recordTotal;
         } else {
           _this.$message.error(res.msg);
         }
@@ -181,10 +189,16 @@ export default {
     },
     // 搜索帖子
     searchPost() {
-      searchPost(this.keyword).then(res => {
-        if(res.code==="200") {
+      searchPost({
+        currentPage: this.page.current,
+        pageSize: this.page.size,
+        keyword: this.keyword
+      }).then(res => {
+        console.log("搜索", res);
+        if(res.code===200) {
           this.postList = [];
           this.postList.push(...res.data.discussPosts)
+          this.page.total = res.data.page.recordTotal;
         }else {
           this.$message.error(res.msg);
         }
@@ -204,11 +218,11 @@ export default {
       this.getAllPost();
     },
     // 更换当前页
-    // changeCurrentPage(current) {
-    //   this.page.current = current;
-    //   this.getAllPost();
-    //   this.$refs.postList.scrollTo(0, 0);
-    // },
+    changeCurrentPage(current) {
+      this.page.current = current;
+      this.getAllPost();
+      this.$refs.postList.scrollTo(0, 0);
+    },
     // 进入用户主页
     goToHisPage(id) {
       this.$router.push({ name: "profile", params: { userId: id } });
@@ -250,7 +264,7 @@ export default {
     this.$bus.$off("toHisPage");
     this.$bus.$on("toPostDetail");
   },
-  mixins: [tagMixin],
+  // mixins: [tagMixin],
 };
 </script>
 <style lang="less">
