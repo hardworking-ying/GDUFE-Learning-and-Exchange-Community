@@ -310,7 +310,7 @@ export default {
       delPostSelf(id).then((res) => {
         if (res.code === 200) {
           _this.post.post.status = 2;
-          LinkTo("/home", "replace");
+          _this.LinkTo("/home", "replace");
         }else {
           _this.$message.error(res.msg);
         }
@@ -334,7 +334,7 @@ export default {
         if (res.code === 200) {
           _this.showDelTip = false;
           _this.delReason = "";
-          LinkTo("/home", "replace")
+          _this.LinkTo("/home", "replace")
         } else {
           _this.$message.error(res.msg);
         }
@@ -392,6 +392,7 @@ export default {
       this.originalPost.title = "";
       this.originalPost.content = "";
     },
+    LinkTo,
   },
   created() {
     this.postId = this.$route.params.postId;

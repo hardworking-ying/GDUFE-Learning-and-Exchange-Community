@@ -30,8 +30,9 @@ export default {
     },
   },
   methods: {
+    LinkTo,
     toDetail(id) {
-      LinkTo("/detail/"+id, "push");
+      this.LinkTo("/detail/"+id, "push");
     },
   },
 };
