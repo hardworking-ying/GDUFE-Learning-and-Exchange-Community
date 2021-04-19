@@ -11,6 +11,7 @@ export const tagMixin = {
     getTagList() {
       const _this = this;
       getTagList().then((res) => {
+        console.log("标签列表", res);
         if (res.code === 200) {
           _this.tagList = [];
           _this.tagList.push(...res.data);

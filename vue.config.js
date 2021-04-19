@@ -5,13 +5,15 @@ function resolve(dir) {
 module.exports = {
   devServer: {
     proxy: {
-        '': {
-            // target: 'http://localhost:9000',
-            target: 'http://10.101.188.98:9006',
-            changeOrigin: true
-        },
+      '': {
+        // target: 'http://localhost:9000',
+        // target: 'http://192.168.43.77:8080/community',
+        target: 'http://10.101.188.98:8080',
+        changeOrigin: true
+      },
     },
-},
+    port: 9006,
+  },
   chainWebpack: (config) => {
     config.resolve.alias
       //set第一个参数：设置的别名，第二个参数：设置的路径

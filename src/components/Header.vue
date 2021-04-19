@@ -89,6 +89,9 @@ export default {
       this.$store.commit("offLogin");
     },
   },
+  created() {
+    console.log("11111", this.$store.state.user);
+  }
 };
 </script>
 

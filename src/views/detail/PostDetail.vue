@@ -3,7 +3,7 @@
     <el-row class="detail-header">
       <el-col :sm="{ span: 24, offset: 0 }" :md="{ span: 18, offset: 3 }">
         <div class="tag-box">
-          <div class="tag">{{ post.post.tag }}</div>
+          <div class="tag">{{ post.tagsName }}</div>
         </div>
         <div class="detail-title">{{ post.post.title }}</div>
       </el-col>
@@ -65,6 +65,7 @@
             :post="post.post"
             :user="post.user"
             :comments="post.comments"
+            :replyCount="post.post.commentCount"
             :likeCount="post.likeCount"
             :likeStatus="post.likeStatus"
             :type="1"
@@ -136,7 +137,9 @@ export default {
         user: {},
         likeCount: 0,
         likeStatus: 0,
+        tagsName: "",
         comments: [],
+        // comments: new Map(),
       },
       showEditor: false,
       showDelTip: false,
@@ -153,6 +156,7 @@ export default {
         title: "",
         content: "",
       },
+
     };
   },
   computed: {},
@@ -161,12 +165,16 @@ export default {
     getPostData() {
       const _this = this;
       getPostDetail(this.postId).then((res) => {
+        console.log("帖子详情", res);
         if (res.code === 200) {
           _this.post.post = res.data.post;
           _this.post.user = res.data.user;
+          // res.data.comments.forEach(item => _this.post.comments.set(item.comment.id, item));
           _this.post.comments = res.data.comments;
           _this.post.likeCount = res.data.likeCount;
           _this.post.likeStatus = res.data.likeStatus;
+          _this.post.tagsName = res.data.tagsName;
+          console.log(_this.post.comments);
         } else {
           _this.$message.error(res.msg);
         }
@@ -177,6 +185,7 @@ export default {
       this.editType = 1;
       this.replyTarget.entityId = this.post.post.id;
       this.replyTarget.targetId = this.post.user.id;
+      this.replyTarget.userId = this.$store.state.user.id;
       this.replyTargetName = this.post.user.username;
       this.showEditor = true;
       console.log("点击了回复");
@@ -364,6 +373,7 @@ export default {
           _this.$message.success("评论成功！");
           _this.getPostData();
         }else {
+          console.log("失败");
           _this.$message.error(res.msg);
         }
       })
@@ -389,9 +399,10 @@ export default {
   },
   mounted() {
     this.$bus.$on("clickReply", (entityType, targetId, targetUserId, targetUsername) => {
-      this.replyTarget.entityType = entity;
+      this.replyTarget.entityType = entityType;
       this.replyTarget.entityId = targetId;
       this.replyTarget.targetId = targetUserId;
+      this.replyTarget.userId = this.$store.state.user.id;
       this.replyTargetName = targetUsername;
       this.editType = 1;
       this.showEditor = true;

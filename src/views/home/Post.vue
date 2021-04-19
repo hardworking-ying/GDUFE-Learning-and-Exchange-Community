@@ -15,7 +15,7 @@
     <div class="post-body" @click="clickPost">
       <div class="post-title">{{ post.post.title }}</div>
       <div class="post-tag-date clearfix">
-        <div class="post-tag">{{ post.post.tag }}</div>
+        <div class="post-tag">{{ post.tagsName }}</div>
         <div class="post-date">{{ post.post.createTime }}</div>
       </div>
       <div class="post-content">{{ post.post.content }}</div>

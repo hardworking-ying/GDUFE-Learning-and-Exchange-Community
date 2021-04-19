@@ -1,37 +1,37 @@
 import { request } from "./request"
-
+import qs from "qs"
 export function getUserInfo(userId){
   return request({
     method: "get",
-    url: "/user/profile/"+userId,
+    url: "/community/user/profile/"+userId,
   })
 }
 
 export function getMyPosts(userId){
   return request({
     method: "get",
-    url: "/myDiscussPost/"+userId,
+    url: "/community/user/myDiscussPost/"+userId,
   })
 }
 
 export function getMyComments(userId){
   return request({
     method: "get",
-    url: "/replyPost/"+userId,
+    url: "/community/user/replyPost/"+userId,
   })
 }
 
 export function getMyFans(userId){
   return request({
     method: "get",
-    url: "/followers/"+userId,
+    url: "/community/followers/"+userId,
   })
 }
 
 export function getMyFollowees(userId){
   return request({
     method: "get",
-    url: "/followees/"+userId,
+    url: "/community/followees/"+userId,
   })
 }
 
@@ -51,7 +51,7 @@ export function follow(entityId) {
   const postData = { formData, $_isFormData: true };
   return request({
     method: "post",
-    url: "/follow",
+    url: "/community/follow",
     data: postData
   })
 }
@@ -65,7 +65,7 @@ export function unFollow(entityId) {
   const postData = { formData, $_isFormData: true };
   return request({
     method: "post",
-    url: "/unfollow",
+    url: "/community/unfollow",
     data: postData
   })
 }

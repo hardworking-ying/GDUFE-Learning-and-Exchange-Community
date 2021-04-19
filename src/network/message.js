@@ -1,7 +1,7 @@
 import { request } from "./request"
 export function getMessageList(userId) {
   return request({
-    url: "/message/" + userId,
+    url: "/community/message/" + userId,
     method: "get",
   })
 }

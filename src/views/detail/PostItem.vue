@@ -41,19 +41,20 @@
         ></i>
         {{ likeCount == 0 ? "" : likeCount }}
       </li>
-      <li class="control-reply" @click="clickReply(post.id, user)">
+      <li class="control-reply" @click="clickReply">
         <i class="fa fa-reply" title="回复"></i>
-        {{ post.commentCount === 0 ? "" : post.commentCount }}
+        {{ replyCount === 0 ? "" : replyCount }}
       </li>
     </ul>
     <PostItem
-      v-for="item in comments"
-      :key="item.comment.id"
+      v-for="(item, key) in comments"
+      :key="key"
       :post="item.comment"
-      :user="item.user"
+      :user="item.userVO"
       :comments="item.replies"
       :likeCount="item.likeCount"
       :likeStatus="item.likeStatus"
+      :replyCount="item.replyCount"
       :type="2"
     >
       <template v-slot:targetUser>
@@ -90,10 +91,14 @@ export default {
       },
     },
     comments: {
+      // type: Map,
+      // default() {
+      //   return new Map();
+      // },
       type: Array,
-      deafult() {
-        return [];
-      },
+      default() {
+        return []
+      }
     },
     likeCount: {
       type: Number,
@@ -106,6 +111,10 @@ export default {
     type: {
       type: Number,
       default: 1,
+    },
+    replyCount: {
+      type: Number,
+      default: 0,
     }
   },
 
@@ -113,7 +122,7 @@ export default {
     clickReply() {
       this.$bus.$emit(
         "clickReply",
-        type,
+        this.type,
         this.post.id,
         this.user.id,
         this.user.username
@@ -129,8 +138,8 @@ export default {
       }).then((res) => {
         console.log(res);
         if (res.code === 200) {
-          _this.post.likeStatus = res.data.likeStatus;
-          _this.post.likeCount = res.data.likeCount;
+          _this.likeStatus = res.data.likeStatus;
+          _this.likeCount = res.data.likeCount;
         } else {
           _this.$message.error(res.msg);
         }
@@ -142,6 +151,7 @@ export default {
   },
   created() {
     this.postId = this.$route.params.postId;
+    console.log('1111111111111comment',this.comments);
   },
   mounted() {},
 };

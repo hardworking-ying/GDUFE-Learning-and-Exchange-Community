@@ -47,7 +47,8 @@
 <script>
 import CommonForm from "components/CommonForm";
 import { loginCheck, getKaptcha } from "network/login";
-import { getUserInfo } from "network/store.js" 
+import { registerConfirm } from "network/register";
+import { getUserInfo } from "network/store.js" ;
 import CryptoJS from "crypto-js";
 
 const SECRET = "GDUFESECRETKEY520100";
@@ -105,9 +106,11 @@ export default {
                 _this.clearAccountCookie();
               };
               _this.$store.commit("onLogin");
-              getUserInfo(res.data).then(result => {
+              console.log(res);
+              getUserInfo(res.data.userId).then(result => {
+                console.log(result.data.user);
                 if(result.code=="200") {
-                  _this.$store.commit("initUser", { user: result.data });
+                  _this.$store.commit("initUser", { user: result.data.user });
                 }else {
                   _this.$message.error(result.msg);
                 }
@@ -144,6 +147,7 @@ export default {
     },
     // 刷新验证码
     refreshKaptcha() {
+      // this.$store.state.baseURL + 
       this.kaptcha = this.$store.state.baseURL + "/kaptcha?p=" + Math.random();
       //console.log("hh",this.kaptcha)
     },
@@ -181,16 +185,29 @@ export default {
       this.$cookies.remove("password");
       this.$cookies.remove("remember");
     },
-    getKaptcha() { 
-      getKaptcha().then((res) => {
-        console.log(res);
+    //
+    getKaptcha() {
+      getKaptcha().then(res => {
+        console.log("kaptcha", res);
       })
     }
   },
   created() {
-    this.getKaptcha();
+    const _this = this;
+    const params = this.$route.params;
+    if(params.userId && params.code) {
+      registerConfirm(params.userId, params.code).then(res => {
+        if(res.code === 200) {
+          _this.$message.success(res.msg);
+        }else {
+          _this.$message.error(res.msg);
+        }
+      })
+    };
+    console.log('params', params);
     this.getAccountCookie();
     this.refreshKaptcha();
+    this.getKaptcha();
   },
 };
 </script>

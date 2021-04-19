@@ -2,29 +2,28 @@ import {request} from './request'
 import qs from "qs"
 
 export function getTagList() {
+  const formData = qs.stringify({});
+  const postData = { formData, $_isFormData: true }  
   return request({
-    method: "get",
-    url: "/getTagList",
+    method: "post",
+    url: "/community/discuss/getTagList",
+    data: postData
   })
 }
 
-export function getAllPost(orderMode) {
+export function getAllPost(params) {
   return request({
     method: "get",
-    url: "/index",
-    params: {
-      orderMode
-    }
+    url: "/community/index",
+    params,
   })
 }
 
-export function searchPost(keyword) {
+export function searchPost(params) {
   return request({
     method: "get",
-    url: "/search",
-    params: {
-      keyword
-    }
+    url: "/community/search",
+    params
   })
 }
 
@@ -33,7 +32,7 @@ export function releasePost(data) {
   const postData = { formData, $_isFormData: true }
   return request({
     method: "POST",
-    url: "/add",
+    url: "/community/discuss/add",
     data: postData
   })
 }

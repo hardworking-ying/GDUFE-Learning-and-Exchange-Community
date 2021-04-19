@@ -16,13 +16,13 @@ export default {
     return {
       orderType: 0,
       orderTypeList: [{
-        value: 0,
+        value: 2,
         label: "新鲜出炉"
       }, {
         value: 1,
         label: "热门话题"
       }, {
-        value: 2,
+        value: 0,
         label: "精选优帖"
       }]
     }

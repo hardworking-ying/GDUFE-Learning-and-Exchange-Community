@@ -19,6 +19,6 @@ export function loginCheck(data) {
 export function getKaptcha() {
   return request({
     method: "get",
-    url: "/community/kaptcha"
+    url: "/community/kaptcha",
   })
 }

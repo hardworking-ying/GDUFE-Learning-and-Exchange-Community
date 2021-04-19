@@ -27,7 +27,9 @@ export default {
   watch: {},
   computed: {},
   methods: {},
-  created() {},
+  created() {
+    this.userId = this.$route.params;
+  },
   mounted() {
     const { userId, code } = this.$route.params;
     const _this = this;
@@ -42,13 +44,13 @@ export default {
           }, 1000);
           const t = setTimeout(()=>{
             window.clearInterval(interval);
-            LinkTo("/login", "replace");
+            _this.LinkTo("/login", "replace");
           },6000)
         }else {
           _this.$message.error(res.msg);
           const t = setTimeout(()=>{
             window.clearTimeout(t);
-            LinkTo("/index", "replace");
+            _this.LinkTo("/index", "replace");
           },2000)
         }
         
@@ -56,6 +58,9 @@ export default {
       .catch(err => {
         console.log(err);
       });
+  },
+  methods: {
+    LinkTo,
   }
 };
 </script>

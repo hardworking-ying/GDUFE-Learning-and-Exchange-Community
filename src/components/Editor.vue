@@ -13,19 +13,18 @@
             <el-select v-model="editInfo.tag" placeholder="添加标签">
               <el-option
                 v-for="item in tagList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
+                :key="item.tagsId"
+                :label="item.tagsName"
+                :value="item.tagsId"
               >
                 <div
-                  :title="item.describe"
-                  :style="{ color: item.color }"
+                  :style="{ color: item.tagsColor }"
                   class="tag-item"
                 >
-                  <i :class="item.icon"></i><span>{{ item.name }}</span>
+                  <i :class="item.tagsIcon"></i><span>{{ item.tagsName }}</span>
                 </div>
               </el-option>
-            </el-select>
+            </el-select> 
             <el-input
               placeholder="请输入标题"
               v-model="editInfo.title"
@@ -86,7 +85,7 @@ export default {
   data() {
     return {
       editInfo: {
-        tag: this.originalPost.tag,
+        tagsId: this.originalPost.tagsId,
         title: this.originalPost.title,
         content: this.originalPost.content,
       },
@@ -101,7 +100,7 @@ export default {
       default() {
         return {
           discussPostId: -1,
-          tag: "",
+          tagsId: "",
           title: "",
           content: "",
         };
@@ -149,10 +148,11 @@ export default {
     },
     release() {
       if (this.isPost) {
-        if (this.editInfo.tag === "") {
+        if (this.editInfo.tagsId === 0) {
           this.$message.error("请选择帖子标签!");
           return;
-        } else if (this.editInfo.title === "") {
+        } else 
+        if (this.editInfo.title === "") {
           this.$message.error("标题不能为空！");
           return;
         } else if (this.editInfo.content === "") {
@@ -173,7 +173,7 @@ export default {
       }
     },
     clearEditor() {
-      this.editInfo.tag = "";
+      this.editInfo.tagsId = "";
       this.editInfo.title = "";
       this.editInfo.content = "";
     },
