@@ -172,6 +172,7 @@ export default {
     // 更换标签
     changeTag(tagId) {
       this.currentTagId = tagId;
+      this.page.current = 1;
       this.getAllPost();
     },
     // 获取帖子列表
