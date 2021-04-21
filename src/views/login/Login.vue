@@ -148,7 +148,7 @@ export default {
     // 刷新验证码
     refreshKaptcha() {
       // this.$store.state.baseURL + 
-      this.kaptcha = this.$store.state.baseURL + "/kaptcha?p=" + Math.random();
+      this.kaptcha = this.$store.state.baseURL + "/community/kaptcha?p=" + Math.random();
       //console.log("hh",this.kaptcha)
     },
     // 将密码信息保存至cookie

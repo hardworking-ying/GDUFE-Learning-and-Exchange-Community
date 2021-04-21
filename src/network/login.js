@@ -22,3 +22,10 @@ export function getKaptcha() {
     url: "/community/kaptcha",
   })
 }
+
+export function logout() {
+  return request({
+    method: "get",
+    url: "/community/logout"
+  })
+}

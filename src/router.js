@@ -7,6 +7,7 @@ const Register = () => import('views/register/Register.vue')
 const Activation = () => import("views/register/Activation.vue");
 const PostDetail = () => import('views/detail/PostDetail.vue')
 const Message = () => import('views/message/Message.vue')
+const ChangePassword = () => import('views/changePwd/ChangePassword')
 
 Vue.use(Router)
 // 解决Error: Avoided redundant navigation to current location路由重复报错
@@ -61,6 +62,11 @@ export default new Router({
     path: '/message',
     name: "message",
     component: Message
+  },
+  {
+    path: '/changepwd',
+    name: 'changePassword',
+    component: ChangePassword
   }
   ]
 })

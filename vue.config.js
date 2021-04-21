@@ -8,7 +8,7 @@ module.exports = {
       '': {
         // target: 'http://localhost:9000',
         // target: 'http://192.168.43.77:8080/community',
-        target: 'http://10.101.188.98:8080',
+        target: 'http://localhost:8080',
         changeOrigin: true
       },
     },

@@ -1,4 +1,5 @@
 import { getTagList } from '@/network/home'
+import { logout } from "network/login"
 
 export const tagMixin = {
   data() {
@@ -24,5 +25,33 @@ export const tagMixin = {
   },
   created() {
     this.getTagList();
+  }
+}
+
+export const logoutMixin = {
+  methods: {
+    logout() {
+      logout();
+      sessionStorage.removeItem("store");
+      this.$store.commit("offLogin");
+    }
+  }
+}
+
+export const checkMixin = {
+  computed: {
+    ifLogin() {
+      return this.$store.state.isLogin;
+    }
+  },
+  methods: {
+    checkAuth() {
+      if(this.ifLogin) {
+        return true;
+      }else {
+        this.$router.push("/login");
+        return false;
+      }
+    }
   }
 }

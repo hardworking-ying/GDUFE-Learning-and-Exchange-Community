@@ -70,6 +70,7 @@
 
 <script>
 import { like } from "network/detail";
+import { checkMixin } from "@/common/mixin"
 export default {
   name: "PostItem",
   data() {
@@ -120,6 +121,7 @@ export default {
 
   methods: {
     clickReply() {
+      if(!this.checkAuth()) return false;
       this.$bus.$emit(
         "clickReply",
         this.type,
@@ -129,6 +131,7 @@ export default {
       );
     },
     clickLike(entityType, entityId, entityUserId, postId) {
+      if(!this.checkAuth()) return false;
       const _this = this;
       like({
         entityType,
@@ -154,6 +157,7 @@ export default {
     console.log('1111111111111comment',this.comments);
   },
   mounted() {},
+  mixins: [checkMixin]
 };
 </script>
 

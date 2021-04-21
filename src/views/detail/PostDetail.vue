@@ -122,6 +122,7 @@ import {
   addComment
 } from "network/detail";
 import { LinkTo } from "assets/util";
+import { checkMixin } from "@/common/mixin"
 
 export default {
   name: "PostDetail",
@@ -182,6 +183,7 @@ export default {
     },
     // 点击回复按钮
     clickReply() {
+      if(!this.checkAuth()) return false;
       this.editType = 1;
       this.replyTarget.entityId = this.post.post.id;
       this.replyTarget.targetId = this.post.user.id;
@@ -412,6 +414,7 @@ export default {
   beforeDestroy() {
     this.$bus.$off("clickReply");
   },
+  mixins: [checkMixin]
 };
 </script>
 

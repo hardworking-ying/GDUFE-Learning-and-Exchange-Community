@@ -87,13 +87,6 @@
                   @current-change="changeCurrentPage"
                 >
                 </el-pagination>
-                <!-- <el-button
-                  class="load-more"
-                  type="primary"
-                  @click="loadMore"
-                  v-if="this.postList.length == 10"
-                  >加载更多</el-button
-                > -->
                 <p class="no-more-data" v-else>没有更多数据啦~</p> 
               </div>
             </div>
@@ -125,7 +118,7 @@ import OrderDropdown from "./OrderDropdown";
 import PostList from "./PostList";
 import Editor from "components/Editor";
 import { getAllPost, searchPost, releasePost } from "network/home";
-import { tagMixin } from "@/common/mixin";
+import { tagMixin, checkMixin } from "@/common/mixin";
 
 export default {
   name: "home",
@@ -216,6 +209,7 @@ export default {
     },
     // 点击发布主题
     clickReleasePost() {
+      if(!this.checkAuth()) return false;
       this.showEditor = true;
       console.log("点击发布主题");
     },
@@ -271,7 +265,7 @@ export default {
     this.$bus.$off("toHisPage");
     this.$bus.$on("toPostDetail");
   },
-  mixins: [tagMixin],
+  mixins: [tagMixin, checkMixin],
 };
 </script>
 <style lang="less">

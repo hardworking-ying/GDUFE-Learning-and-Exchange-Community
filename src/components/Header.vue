@@ -62,6 +62,7 @@
 </template>
 
 <script>
+import { logoutMixin } from "@/common/mixin"
 export default {
   name: "Header",
   data() {
@@ -83,15 +84,17 @@ export default {
     search() {
       this.$router.push("/home?keyword=" + this.keyWord);
     },
-    logout() {
-      console.log("注销");
-      sessionStorage.removeItem("store");
-      this.$store.commit("offLogin");
-    },
+    // logout() {
+    //   console.log("注销");
+    //   logout();
+    //   sessionStorage.removeItem("store");
+    //   this.$store.commit("offLogin");
+    // },
   },
   created() {
     console.log("11111", this.$store.state.user);
-  }
+  },
+  mixins: [logoutMixin]
 };
 </script>
 

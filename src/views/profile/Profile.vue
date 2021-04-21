@@ -19,9 +19,9 @@
             </div>
             <div class="profile-head-right">
               <div class="profile-name">{{ userInfo.username }}</div>
-              <div class="profile-createtime">
-                注册于 {{ userInfo.createTime }}
-              </div>
+              <span class="profile-type">
+                {{ userInfo.type===1? "管理员" : "普通用户" }}
+              </span>
               <div class="modify-account">
                 <el-button size="small" type="primary" @click="changePassword"
                   ><i class="fa fa-pencil-square-o" aria-hidden="true"></i
@@ -275,7 +275,7 @@ export default {
     },
     // 修改密码
     changePassword() {
-      console.log("修改密码");
+      this.$router.push('/changepwd')
     },
     handleAvatarSuccess() {
       console.log("上传头像成功！");
@@ -311,6 +311,12 @@ export default {
         > .profile-name {
           font-size: 24px;
           padding: 10px 0;
+        }
+        > .profile-type {
+          padding: .2em .4em;
+          color: @primary;
+          background-color: #fff;
+          border-radius: 4px;
         }
         > .modify-account {
           margin-top: 10px;

@@ -69,3 +69,13 @@ export function unFollow(entityId) {
     data: postData
   })
 }
+
+export function changePassword(data) {
+  const formData = qs.stringify(data);
+  const postData = { formData, $_isFormData: true };
+  return request({
+    method: "post",
+    url: "/community/user/password",
+    data: postData
+  })
+}
