@@ -23,10 +23,9 @@
         </div>
         <div class="personal-box" v-show="isLogin">
           <div>
-            <router-link to="/message">
-              <span class="notify"
-                ><i class="fa fa-bell" aria-hidden="true"></i
-              ></span>
+            <router-link to="/message" class="notify">
+              <span><i class="fa fa-bell" title="新消息通知"></i></span>
+              <span class="dot" v-if="$store.state.hasMsg"></span>
             </router-link>
           </div>
           <div
@@ -62,7 +61,7 @@
 </template>
 
 <script>
-import { logoutMixin } from "@/common/mixin"
+import { logoutMixin } from "@/common/mixin";
 export default {
   name: "Header",
   data() {
@@ -71,7 +70,9 @@ export default {
       keyWord: "",
     };
   },
-  props: {},
+  props: {
+    
+  },
   computed: {
     isLogin() {
       return this.$store.state.isLogin;
@@ -94,7 +95,7 @@ export default {
   created() {
     console.log("11111", this.$store.state.user);
   },
-  mixins: [logoutMixin]
+  mixins: [logoutMixin],
 };
 </script>
 
@@ -165,6 +166,16 @@ export default {
       }
       .notify {
         color: #fff;
+        position: relative;
+        > .dot {
+          position: absolute;
+          right: -4px;
+          top: -4px;
+          width: 8px;
+          height: 8px;
+          background-color: red;
+          border-radius: 50%;
+        }
       }
     }
     .login-box {

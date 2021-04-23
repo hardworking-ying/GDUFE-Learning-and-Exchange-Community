@@ -40,11 +40,11 @@
                   >取消加精</el-button
                 >
               </li>
-              <li>
+              <!-- <li>
                 <el-button type="primary" @click.native="clickDeleteByAdmin"
                   >删除</el-button
                 >
-              </li>
+              </li> -->
             </template>
             <template v-if="$store.state.user.id === post.user.id">
               <li>
@@ -119,10 +119,10 @@ import {
   setTop,
   setWonderful,
   modifyPost,
-  addComment
+  addComment,
 } from "network/detail";
 import { LinkTo } from "assets/util";
-import { checkMixin } from "@/common/mixin"
+import { checkMixin } from "@/common/mixin";
 
 export default {
   name: "PostDetail",
@@ -157,7 +157,6 @@ export default {
         title: "",
         content: "",
       },
-
     };
   },
   computed: {},
@@ -183,7 +182,7 @@ export default {
     },
     // 点击回复按钮
     clickReply() {
-      if(!this.checkAuth()) return false;
+      if (!this.checkAuth()) return false;
       this.editType = 1;
       this.replyTarget.entityId = this.post.post.id;
       this.replyTarget.targetId = this.post.user.id;
@@ -295,25 +294,36 @@ export default {
     // 用户自己点击删除按钮
     clickDeleteHimself() {
       const _this = this;
-      this.$confirm("此操作将永久删除该帖子及相关评论, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
+      _this
+        .$confirm("此操作将永久删除该帖子及相关评论, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
         .then(() => {
+          console.log("确定删除");
           _this.delPostSelf();
+          _this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
         })
         .catch(() => {
-          return false;
+          console.log("取消删除");
+          _this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
         });
     },
     delPostSelf() {
       const _this = this;
       delPostSelf(id).then((res) => {
+        console.log("删除帖子！", res);
         if (res.code === 200) {
           _this.post.post.status = 2;
           _this.LinkTo("/home", "replace");
-        }else {
+        } else {
           _this.$message.error(res.msg);
         }
       });
@@ -336,7 +346,7 @@ export default {
         if (res.code === 200) {
           _this.showDelTip = false;
           _this.delReason = "";
-          _this.LinkTo("/home", "replace")
+          _this.LinkTo("/home", "replace");
         } else {
           _this.$message.error(res.msg);
         }
@@ -355,30 +365,30 @@ export default {
       const _this = this;
       modifyPost({
         discussPostId: this.postId,
-        ...post
-      }).then(res => {
-        if(res.code===200) {
+        ...post,
+      }).then((res) => {
+        if (res.code === 200) {
           _this.$message.success("修改成功！");
           _this.getPostData();
-        }else {
+        } else {
           _this.$message.error(res.msg);
         }
-      })
+      });
     },
     //发布评论
     releaseComment(comment) {
       this.replyTarget.content = comment;
-      console.log("发布评论", this.replyTarget);     
+      console.log("发布评论", this.replyTarget);
       const _this = this;
-      addComment(this.replyTarget, this.postId).then(res => {
-        if(res.code===200) {
+      addComment(this.replyTarget, this.postId).then((res) => {
+        if (res.code === 200) {
           _this.$message.success("评论成功！");
           _this.getPostData();
-        }else {
+        } else {
           console.log("失败");
           _this.$message.error(res.msg);
         }
-      })
+      });
     },
     // 点击编辑
     clickEdit() {
@@ -401,20 +411,23 @@ export default {
     this.getPostData();
   },
   mounted() {
-    this.$bus.$on("clickReply", (entityType, targetId, targetUserId, targetUsername) => {
-      this.replyTarget.entityType = entityType;
-      this.replyTarget.entityId = targetId;
-      this.replyTarget.targetId = targetUserId;
-      this.replyTarget.userId = this.$store.state.user.id;
-      this.replyTargetName = targetUsername;
-      this.editType = 1;
-      this.showEditor = true;
-    });
+    this.$bus.$on(
+      "clickReply",
+      (entityType, targetId, targetUserId, targetUsername) => {
+        this.replyTarget.entityType = entityType;
+        this.replyTarget.entityId = targetId;
+        this.replyTarget.targetId = targetUserId;
+        this.replyTarget.userId = this.$store.state.user.id;
+        this.replyTargetName = targetUsername;
+        this.editType = 1;
+        this.showEditor = true;
+      }
+    );
   },
   beforeDestroy() {
     this.$bus.$off("clickReply");
   },
-  mixins: [checkMixin]
+  mixins: [checkMixin],
 };
 </script>
 

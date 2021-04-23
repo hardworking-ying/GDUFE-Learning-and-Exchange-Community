@@ -77,5 +77,15 @@ export function changePassword(data) {
     method: "post",
     url: "/community/user/password",
     data: postData
+  }) 
+}
+
+export function uploadAvatar(data) {
+  const formData = data;
+  const postData = { formData, $_isFormData: true };
+  return request({
+    method: "post",
+    url: "/community/user/upload",
+    data: postData
   })
 }

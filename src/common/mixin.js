@@ -34,6 +34,9 @@ export const logoutMixin = {
       logout();
       sessionStorage.removeItem("store");
       this.$store.commit("offLogin");
+      if(this.$websocket) {
+        this.$websocket.close();
+      }
     }
   }
 }

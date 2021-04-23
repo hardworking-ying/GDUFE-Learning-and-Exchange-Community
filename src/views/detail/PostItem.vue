@@ -51,7 +51,7 @@
       :key="key"
       :post="item.comment"
       :user="item.userVO"
-      :comments="item.replies"
+      :comments="item.replies | commentsFilter"
       :likeCount="item.likeCount"
       :likeStatus="item.likeStatus"
       :replyCount="item.replyCount"
@@ -118,7 +118,17 @@ export default {
       default: 0,
     }
   },
-
+  filters: {
+    commentsFilter(value) {
+      // console.log("filter", value);
+      // const map = new Map();
+      // value.forEach(item => {
+      //   map.set(item.comment.id, item)
+      // });
+      // return map;
+      return value;
+    } 
+  },
   methods: {
     clickReply() {
       if(!this.checkAuth()) return false;

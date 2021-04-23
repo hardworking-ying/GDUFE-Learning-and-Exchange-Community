@@ -59,6 +59,7 @@ export default {
     getMessageList() {
       const _this = this;
       getMessageList(this.$store.state.user.id).then((res) => {
+        console.log("消息列表来了", res);
         if (res.code === 200) {
           _this.msgList = [];
           _this.msgList.push(...res.data);
@@ -70,6 +71,7 @@ export default {
   },
   created() {
     this.getMessageList();
+    this.$store.commit("setHasMsg", {hasMsg: false});
   },
 };
 </script>

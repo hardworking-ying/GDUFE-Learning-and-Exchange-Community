@@ -9,8 +9,8 @@
                 class="avatar-uploader"
                 action="#"
                 :show-file-list="false"
-                :on-success="handleAvatarSuccess"
-                :disabled="isHimself"
+                :on-change="handleAvatarChange"
+                :disabled="!isHimself"
               >
                 <img :src="userInfo.headerUrl" class="avatar" />
               </el-upload>
@@ -70,8 +70,8 @@
                 v-for="item in myFollowees"
                 :key="item.id"
               >
-                <router-link :to="'/profile/' + item.id">
-                  <Follow :info="item" />
+                <router-link :to="'/profile/' + item.user.id">
+                  <Follow :info="item.user" />
                 </router-link>
               </div>
             </div>
@@ -83,8 +83,8 @@
                 v-for="item in myFans"
                 :key="item.id"
               >
-                <router-link :to="'/profile/' + item.id">
-                  <Follow :info="item" />
+                <router-link :to="'/profile/' + item.user.id">
+                  <Follow :info="item.user" />
                 </router-link>
               </div>
             </div>
@@ -109,6 +109,7 @@ import {
   getMyThumbs,
   follow,
   unFollow,
+  uploadAvatar
 } from "network/profile";
 import LoginVue from '../login/Login.vue';
 
@@ -170,12 +171,12 @@ export default {
         if (res.code === 200) {
           _this.userInfo = res.data.user;
           _this.hasFollowed = res.data.hasFollowed;
-          _this.isHimself = res.data.isHimself;
+          _this.isHimself = res.data.user.id === this.$store.state.user.id;
           _this.likeNum = res.data.likeCount;
           _this.fansNum = res.data.followerCount;
           _this.followeeNum = res.data.followeeCount;
           console.log('dddd', _this.followeeNum);
-          _this.subject = res.data.isHimself ? "我" : "TA";
+          _this.subject = _this.isHimself ? "我" : "TA";
         } else {
           _this.$message.error(res.msg);
         }
@@ -189,7 +190,6 @@ export default {
           _this.myPosts = [];
           _this.myPosts.push(...res.data.discussPosts);
           _this.postNum = res.data.page.recordTotal;
-          console.log(_this.postNum);
         } else {
           _this.$message.error(res.msg);
         }
@@ -277,8 +277,18 @@ export default {
     changePassword() {
       this.$router.push('/changepwd')
     },
-    handleAvatarSuccess() {
-      console.log("上传头像成功！");
+    handleAvatarChange(file) {
+      let formData = new FormData();
+      formData.append("headerImage", file.raw);
+      const _this = this;
+      uploadAvatar(formData).then((res) => {
+        console.log('上传图片',res);
+        if (res.code === 200) {
+          _this.userInfo.headerUrl = URL.createObjectURL(file.raw);;
+        } else {
+          _this.$message.error(res.msg);
+        }
+      });
     }
   },
   created() {

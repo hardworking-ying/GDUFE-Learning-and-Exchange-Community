@@ -10,7 +10,7 @@
             <i class="fa fa-reply" aria-hidden="true"></i> {{ targetUser }}
           </div>
           <div class="tag-and-title" v-else>
-            <el-select v-model="editInfo.tag" placeholder="添加标签">
+            <el-select v-model="editInfo.tagsId" placeholder="添加标签">
               <el-option
                 v-for="item in tagList"
                 :key="item.tagsId"

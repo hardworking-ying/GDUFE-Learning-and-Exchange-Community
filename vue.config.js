@@ -7,8 +7,8 @@ module.exports = {
     proxy: {
       '': {
         // target: 'http://localhost:9000',
-        // target: 'http://192.168.43.77:8080/community',
-        target: 'http://localhost:8080',
+        target: 'http://192.168.43.77:8080',
+        // target: 'http://localhost:8080',
         changeOrigin: true
       },
     },

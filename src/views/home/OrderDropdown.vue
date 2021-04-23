@@ -14,16 +14,13 @@ export default {
   name: "OrderDropdown",
   data() {
     return {
-      orderType: 0,
+      orderType: 1,
       orderTypeList: [{
         value: 2,
         label: "新鲜出炉"
       }, {
         value: 1,
         label: "热门话题"
-      }, {
-        value: 0,
-        label: "精选优帖"
       }]
     }
   },

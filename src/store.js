@@ -13,9 +13,10 @@ export default new Vuex.Store({
       headerUrl: "",
       createTime: "",
     },
-    baseURL: "http://localhost:8080",
-    // baseURL: "http://192.168.43.77:8080/community",
+    // baseURL: "http://localhost:8080",
+    baseURL: "http://192.168.43.77:8080",
     // baseURL: "http://10.101.188.98:8080/community",
+    hasMsg: false
   },
   getters: {
 
@@ -35,7 +36,11 @@ export default new Vuex.Store({
     initUser(state, playLoad) {
       state.user = playLoad.user;
       console.log("111", state.user);
-    } 
+    },
+    setHasMsg(state, playLoad) {
+      state.hasMsg = playLoad.hasMsg;
+      console.log("新消息状态改变", playLoad.hasMsg);
+    }
   },
   actions: {
   }

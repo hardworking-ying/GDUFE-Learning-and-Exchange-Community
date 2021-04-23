@@ -1,7 +1,12 @@
 import { request } from "./request"
-export function getMessageList(userId) {
+import qs from "qs"
+export function getMessageList() {
+  const dataObj = {};
+  const formData = qs.stringify(dataObj);
+  const postData = {formData, $_isFormData: true}
   return request({
-    url: "/community/message/" + userId,
-    method: "get",
+    url: "/community/getUnreadList",
+    method: "post",
+    data: postData
   })
 }

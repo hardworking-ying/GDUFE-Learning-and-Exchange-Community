@@ -11,11 +11,63 @@
 <script>
 import Header from "components/Header";
 import Footer from "components/Footer";
+import { getMessageList } from "network/message"
 export default {
   name: "app",
   components: {
     Header,
     Footer,
+  },
+  data() {
+    return {
+      hasMag: false
+    }
+  },
+  computed: {
+    userId() {
+      return this.$store.state.user ? this.$store.state.user.id : "";
+    }
+  },
+  watch: {
+    userId(newVal, oldVal) {
+      console.log("userId改变");
+      this.getMsgList();
+      this.initWebsocket(newVal)
+    }
+  },
+  methods: {
+    initWebsocket(userId) {
+      this.$websocket = new WebSocket("ws://192.168.43.77:8080/community/websocket/" + userId);
+      // this.$websocket = new WebSocket("ws://localhost:8080/community/websocket/" + userId);
+      this.$websocket.onopen = this.websocketonopen;
+      this.$websocket.onerror = this.websocketonerror;
+      this.$websocket.onmessage = this.websocketonmessage;
+      this.$websocket.onclose = this.websocketclose;
+    },
+    websocketonopen() {
+      console.log("websocket 连接成功");
+    },
+    websocketonerror() {
+      console.log("websocket 连接出错");
+    },
+    websocketonmessage(e) {
+      // let data = JSON.parse(e.data);
+      // if(data.data.code===9) {
+      //   this.$hasMsg = true;
+      // }else {
+      //   this.hasMsg = false;
+      // }
+      this.$store.commit("setHasMsg", {hasMsg: true})
+      console.log("websocket 监听");
+    },
+    websocketclose() {
+      console.log("websocket 连接关闭");
+    },
+    getMsgList() {
+      getMessageList().then(res => {
+        console.log("消息", res);
+      })
+    }
   },
   created() {
     //在页面加载时读取sessionStorage里的状态信息
@@ -32,6 +84,11 @@ export default {
     window.addEventListener("beforeunload", () => {
       sessionStorage.setItem("store", JSON.stringify(this.$store.state));
     });
+  },
+  beforeDestroy() {
+    if(this.$websocket) {
+      this.$websocket.close();
+    }
   }
 };
 </script>

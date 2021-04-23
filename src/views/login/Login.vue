@@ -109,7 +109,7 @@ export default {
               console.log(res);
               getUserInfo(res.data.userId).then(result => {
                 console.log(result.data.user);
-                if(result.code=="200") {
+                if(result.code===200) {
                   _this.$store.commit("initUser", { user: result.data.user });
                 }else {
                   _this.$message.error(result.msg);
@@ -138,6 +138,8 @@ export default {
                 message: res.msg + " 服务器异常！请稍后再试！",
                 type: "error",
               });
+            } else {
+              _this.$message.error(res.msg);
             }
           },
           (error) => {}
@@ -190,7 +192,7 @@ export default {
       getKaptcha().then(res => {
         console.log("kaptcha", res);
       })
-    }
+    },
   },
   created() {
     const _this = this;

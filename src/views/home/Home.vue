@@ -241,6 +241,7 @@ export default {
     releasePost(post) {
       const _this = this;
       releasePost(post).then((res) => {
+        console.log("发布帖子", res);
         if (res.code === 200) {
           _this.$message.success(res.msg);
         } else {
