@@ -20,7 +20,7 @@
             <div class="profile-head-right">
               <div class="profile-name">{{ userInfo.username }}</div>
               <span class="profile-type">
-                {{ userInfo.type===1? "管理员" : "普通用户" }}
+                {{ userInfo.type === 1 ? "管理员" : "普通用户" }}
               </span>
               <div class="modify-account">
                 <el-button size="small" type="primary" @click="changePassword"
@@ -45,7 +45,21 @@
       <el-col :sm="{ span: 24, offset: 0 }" :md="{ span: 18, offset: 3 }">
         <el-tabs type="border-card">
           <el-tab-pane :label="subject + '的帖子(' + postNum + ')'">
-            <PostAboutMe v-for="item in myPosts" :key="item.post.id" :item="item" />
+            <PostAboutMe
+              v-for="item in myPosts"
+              :key="item.post.id"
+              :item="item"
+            />
+            <el-pagination
+              ref="pagination1"
+              background
+              layout="prev, pager, next"
+              :total="postPage.total"
+              :page-size="postPage.size"
+              :current-page="postPage.currentPage"
+              @current-change="changeCurrentPostPage"
+            >
+            </el-pagination>
           </el-tab-pane>
           <el-tab-pane :label="subject + '的评论(' + commentNum + ')'">
             <Reply
@@ -54,6 +68,16 @@
               :item="item"
               :subject="subject"
             />
+            <el-pagination
+              ref="pagination2"
+              background
+              layout="prev, pager, next"
+              :total="commentPage.total"
+              :page-size="commentPage.size"
+              :current-page="commentPage.currentPage"
+              @current-change="changeCurrentCommentPage"
+            >
+            </el-pagination>
           </el-tab-pane>
           <!-- <el-tab-pane :label="subject + '的点赞(' + likeNum + ')'">
             <ThumbUp
@@ -109,9 +133,9 @@ import {
   getMyThumbs,
   follow,
   unFollow,
-  uploadAvatar
+  uploadAvatar,
 } from "network/profile";
-import LoginVue from '../login/Login.vue';
+import LoginVue from "../login/Login.vue";
 
 export default {
   name: "Profile",
@@ -145,6 +169,16 @@ export default {
       myFans: [],
       myComments: [],
       // myThumbs: [],
+      postPage: {
+        total: 0,
+        currentPage: 1,
+        pageSize: 10,
+      },
+      commentPage: {
+        total: 0,
+        currentPage: 1,
+        pageSize: 10,
+      },
     };
   },
   watch: {
@@ -167,7 +201,7 @@ export default {
     getBasicInfo() {
       const _this = this;
       getUserInfo(this.id).then((res) => {
-        console.log("个人信息",res);
+        console.log("个人信息", res);
         if (res.code === 200) {
           _this.userInfo = res.data.user;
           _this.hasFollowed = res.data.hasFollowed;
@@ -175,7 +209,7 @@ export default {
           _this.likeNum = res.data.likeCount;
           _this.fansNum = res.data.followerCount;
           _this.followeeNum = res.data.followeeCount;
-          console.log('dddd', _this.followeeNum);
+          console.log("dddd", _this.followeeNum);
           _this.subject = _this.isHimself ? "我" : "TA";
         } else {
           _this.$message.error(res.msg);
@@ -185,25 +219,43 @@ export default {
     // 获取用户的帖子
     getPosts() {
       const _this = this;
-      getMyPosts(this.id).then((res) => {
+      getMyPosts(this.id, {
+        currentPage: this.postPage.currentPage,
+        pageSize: 10,
+      }).then((res) => {
+        console.log("comments", res, "当前页", _this.postPage.currentPage);
         if (res.code === 200) {
           _this.myPosts = [];
           _this.myPosts.push(...res.data.discussPosts);
           _this.postNum = res.data.page.recordTotal;
+          _this.postPage.total = res.data.page.recordTotal;
         } else {
           _this.$message.error(res.msg);
         }
       });
     },
+    changeCurrentPostPage(current) {
+      this.postPage.currentPage = current;
+      this.getPosts();
+    },
+    changeCurrentCommentPage(current) {
+      this.commentPage.currentPage = current;
+      this.getComments();
+    },
     // 获取用户评论
     getComments() {
       const _this = this;
-      getMyComments(this.id).then((res) => {
-        console.log("comments", res);
+      getMyComments(
+        this.id,
+        {currentPage: this.commentPage.currentPage,
+        pageSize: 10,
+      }).then((res) => {
+        console.log("comments", res, "当前页", _this.commentPage.currentPage);
         if (res.code === 200) {
           _this.myComments = [];
           _this.myComments.push(...res.data.replyPosts);
           _this.commentNum = res.data.totalPostSize;
+          _this.commentPage.total = res.data.totalPostSize;
         } else {
           _this.$message.error(res.msg);
         }
@@ -275,21 +327,21 @@ export default {
     },
     // 修改密码
     changePassword() {
-      this.$router.push('/changepwd')
+      this.$router.push("/changepwd");
     },
     handleAvatarChange(file) {
       let formData = new FormData();
       formData.append("headerImage", file.raw);
       const _this = this;
       uploadAvatar(formData).then((res) => {
-        console.log('上传图片',res);
+        console.log("上传图片", res);
         if (res.code === 200) {
-          _this.userInfo.headerUrl = URL.createObjectURL(file.raw);;
+          _this.userInfo.headerUrl = URL.createObjectURL(file.raw);
         } else {
           _this.$message.error(res.msg);
         }
       });
-    }
+    },
   },
   created() {
     this.initData();
@@ -323,7 +375,7 @@ export default {
           padding: 10px 0;
         }
         > .profile-type {
-          padding: .2em .4em;
+          padding: 0.2em 0.4em;
           color: @primary;
           background-color: #fff;
           border-radius: 4px;

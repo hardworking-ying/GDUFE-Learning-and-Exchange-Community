@@ -4,6 +4,8 @@
       <el-col :sm="{ span: 24, offset: 0 }" :md="{ span: 18, offset: 3 }">
         <div class="tag-box">
           <div class="tag">{{ post.tagsName }}</div>
+          <div class="tag tag-top" v-if="post.post.type === 1">置顶</div>
+          <div class="tag tag-good" v-if="post.post.status === 1">精华</div>
         </div>
         <div class="detail-title">{{ post.post.title }}</div>
       </el-col>
@@ -74,6 +76,16 @@
               <div class="author-flag">楼主</div>
             </template>
           </PostItem>
+          <el-pagination
+            ref="pagination"
+            background
+            layout="prev, pager, next"
+            :total="commentPage.total"
+            :page-size="commentPage.size"
+            :current-page="commentPage.currentPage"
+            @current-change="changeCurrentCommentPage"
+          >
+          </el-pagination>
         </div>
       </el-col>
     </el-row>
@@ -82,6 +94,7 @@
         :isPost="editType === 0"
         :targetUser="replyTargetName"
         :originalPost="originalPost"
+        :tagList="tagList"
         v-if="showEditor"
         @closeEditor="hideEditor"
         @releasePost="modifyPost"
@@ -117,12 +130,14 @@ import {
   like,
   unLike,
   setTop,
+  unSetTop,
   setWonderful,
+  unSetWonderful,
   modifyPost,
   addComment,
 } from "network/detail";
 import { LinkTo } from "assets/util";
-import { checkMixin } from "@/common/mixin";
+import { checkMixin, tagMixin } from "@/common/mixin";
 
 export default {
   name: "PostDetail",
@@ -153,9 +168,14 @@ export default {
       },
       replyTargetName: "",
       originalPost: {
-        tag: "",
+        tagsId: "",
         title: "",
         content: "",
+      },
+      commentPage: {
+        total: 0,
+        currentPage: 1,
+        pageSize: 10,
       },
     };
   },
@@ -164,9 +184,13 @@ export default {
     // 获取帖子详情
     getPostData() {
       const _this = this;
-      getPostDetail(this.postId).then((res) => {
+      getPostDetail(this.postId, {
+        currentPage: this.commentPage.currentPage,
+        pageSize: 10,
+      }).then((res) => {
         console.log("帖子详情", res);
         if (res.code === 200) {
+          _this.commentPage.total = res.data.post.commentCount;
           _this.post.post = res.data.post;
           _this.post.user = res.data.user;
           // res.data.comments.forEach(item => _this.post.comments.set(item.comment.id, item));
@@ -179,6 +203,10 @@ export default {
           _this.$message.error(res.msg);
         }
       });
+    },
+    changeCurrentCommentPage(current) {
+      this.commentPage.currentPage = current;
+      this.getPostData();
     },
     // 点击回复按钮
     clickReply() {
@@ -208,11 +236,12 @@ export default {
         });
     },
     setTop() {
+      const _this = this;
       setTop(this.post.post.id).then((res) => {
         if (res.code === 200) {
           _this.post.post.type = 1;
         } else {
-          _this.$messgae.error(res.msg);
+          _this.$message.error(res.msg);
         }
       });
     },
@@ -224,25 +253,28 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      })
-        .then(() => {
-          _this.unSetTop();
-        })
-        .catch(() => {
-          return false;
-        });
+      }).then(() => {
+        console.log("确定操作");
+        _this.unSetTop();
+      });
+      // .catch(() => {
+      //   console.log("取消操作");
+      //   // return false;
+      // });
     },
     unSetTop() {
+      const _this = this;
       unSetTop(this.post.post.id).then((res) => {
         if (res.code === 200) {
           _this.post.post.type = 0;
         } else {
-          _this.$messgae.error(res.msg);
+          _this.$message.error(res.msg);
         }
       });
     },
     // 点击加精按钮
     clickSetGood() {
+      const _this = this;
       console.log("加精");
       this.$confirm("确定设置该帖子为精帖吗?", "提示", {
         confirmButtonText: "确定",
@@ -259,15 +291,17 @@ export default {
     setGood() {
       const _this = this;
       setWonderful(this.post.post.id).then((res) => {
+        console.log(res);
         if (res.code === 200) {
           _this.post.post.status = 1;
         } else {
-          _this.$messgae.error(res.msg);
+          _this.$message.error(res.msg);
         }
       });
     },
     // 取消加精
     clickUnSetGood() {
+      const _this = this;
       console.log("加精");
       this.$confirm("确定设置该帖子为精帖吗?", "提示", {
         confirmButtonText: "确定",
@@ -287,7 +321,7 @@ export default {
         if (res.code === 200) {
           _this.post.post.status = 0;
         } else {
-          _this.$messgae.error(res.msg);
+          _this.$message.error(res.msg);
         }
       });
     },
@@ -307,18 +341,18 @@ export default {
             type: "success",
             message: "删除成功!",
           });
-        })
-        .catch(() => {
-          console.log("取消删除");
-          _this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
         });
+      // .catch(() => {
+      //   console.log("取消删除");
+      //   _this.$message({
+      //     type: "info",
+      //     message: "已取消删除",
+      //   });
+      // });
     },
     delPostSelf() {
       const _this = this;
-      delPostSelf(id).then((res) => {
+      delPostSelf(this.postId).then((res) => {
         console.log("删除帖子！", res);
         if (res.code === 200) {
           _this.post.post.status = 2;
@@ -393,14 +427,14 @@ export default {
     // 点击编辑
     clickEdit() {
       this.editType = 0;
-      this.originalPost.tag = this.post.post.tag;
+      this.originalPost.tagsId = this.post.post.tagsId;
       this.originalPost.title = this.post.post.title;
       this.originalPost.content = this.post.post.content;
       this.showEditor = true;
     },
     // 清空originalPost
     clearOriginalPost() {
-      this.originalPost.tag = 0;
+      this.originalPost.tagsId = 0;
       this.originalPost.title = "";
       this.originalPost.content = "";
     },
@@ -409,6 +443,7 @@ export default {
   created() {
     this.postId = this.$route.params.postId;
     this.getPostData();
+    console.log("qqq", this.$store.state.user.type);
   },
   mounted() {
     this.$bus.$on(
@@ -427,7 +462,7 @@ export default {
   beforeDestroy() {
     this.$bus.$off("clickReply");
   },
-  mixins: [checkMixin],
+  mixins: [checkMixin, tagMixin],
 };
 </script>
 
@@ -444,6 +479,15 @@ export default {
         padding: 0.2em 0.5em;
         background-color: #fff;
         border-radius: 4px;
+        margin-right: 16px;
+      }
+      .tag-top {
+        color: #fff;
+        background-color: red;
+      }
+      .tag-good {
+        color: #fff;
+        background-color: rgb(2, 182, 182);
       }
     }
     .detail-title {

@@ -7,17 +7,20 @@ export function getUserInfo(userId){
   })
 }
 
-export function getMyPosts(userId){
+export function getMyPosts(userId, params){
   return request({
     method: "get",
-    url: "/community/user/myDiscussPost/"+userId,
+    url: "/community/user/myDiscussPost/" + userId,
+    params
   })
 }
 
-export function getMyComments(userId){
+export function getMyComments(userId, params){
+  console.log("params", params);
   return request({
     method: "get",
     url: "/community/user/replyPost/"+userId,
+    params
   })
 }
 

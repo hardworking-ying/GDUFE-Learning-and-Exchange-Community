@@ -108,7 +108,7 @@ export default {
               _this.$store.commit("onLogin");
               console.log(res);
               getUserInfo(res.data.userId).then(result => {
-                console.log(result.data.user);
+                console.log("测试获取用户", result.data.user);
                 if(result.code===200) {
                   _this.$store.commit("initUser", { user: result.data.user });
                 }else {

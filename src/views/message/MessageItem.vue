@@ -1,7 +1,7 @@
 <template>
   <div class="message-item">
-    <router-link :to="'/detail/' + message.postId" class="message-content">
-      {{ message.content }}
+    <router-link :to="'/detail/' + message.discussPostId" class="message-content">
+      {{ message.operatorName }}{{ message.operation }}了你的{{ message.type }}。
     </router-link>
     <div class="message-operate">
       <span v-if="message.status === 0" class="message-status">未读</span>
@@ -20,9 +20,12 @@ export default {
       type: Object,
       default() {
         return {
-          id: -1,
-          content: "是客户反馈是否",
-          status: 0
+          discussPostId: 155743,
+          operation: "评论",
+          operatorName: "甄嬛",
+          type: "评论",
+          unreadId: 3,
+          userId: 11,
         };
       },
     },
@@ -46,7 +49,7 @@ export default {
   background-color: #fff;
   border: 1px solid;
   border-radius: 8px;
-  transition: all .5s;
+  transition: all 0.5s;
   &:hover {
     box-shadow: 0 0 8px 2px #ccc;
   }

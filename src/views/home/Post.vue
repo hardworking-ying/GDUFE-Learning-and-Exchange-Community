@@ -13,12 +13,15 @@
       </div>
     </div>
     <div class="post-body" @click="clickPost">
-      <div class="post-title">{{ post.post.title }}</div>
+      <div class="post-title" v-html="post.post.title"></div>
       <div class="post-tag-date clearfix">
         <div class="post-tag">{{ post.tagsName }}</div>
+        <div class="post-tag post-top" v-if="post.post.type === 1">置顶</div>
+        <div class="post-tag post-good" v-if="post.post.status === 1">精华</div>
         <div class="post-date">{{ post.post.createTime }}</div>
       </div>
-      <div class="post-content">{{ post.post.content }}</div>
+      <div class="post-content" v-html="post.post.content"></div>
+      <!-- {{ post.post.content }} -->
     </div>
     <div class="post-data" @click="clickPost">
       <div class="post-comment-num">
@@ -26,7 +29,7 @@
         {{ post.post.commentCount }}
       </div>
       <div class="like-num">
-        <i class="fa fa-heart-o" aria-hidden="true"></i> {{ post.post.likeCount }}
+        <i class="fa fa-heart-o" aria-hidden="true"></i> {{ post.likeCount }}
       </div>
     </div>
   </div>
@@ -98,6 +101,14 @@ export default {
         background-color: #eeeeee;
         border-radius: 4px;
         margin-right: 10px;
+      }
+      .post-top {
+        color: #fff;
+        background-color: red;
+      }
+      .post-good {
+        color: #fff;
+        background-color: @primary;
       }
       .post-date {
         float: left;

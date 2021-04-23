@@ -28,13 +28,24 @@ export const tagMixin = {
   }
 }
 
+function clearAllCookie() {
+  var keys = document.cookie.match(/[^ =;]+(?=\=)/g);
+  if (keys) {
+    for (var i = keys.length; i--;)
+      document.cookie = keys[i] + '=0;expires=' + new Date(0).toUTCString()
+  }
+}
+
 export const logoutMixin = {
   methods: {
     logout() {
-      logout();
+      // logout();
+      // clearAllCookie();
+      document.cookie ='ticket=0;expires=' + new Date(0).toUTCString()
+      console.log("cookie", document.cookie);
       sessionStorage.removeItem("store");
       this.$store.commit("offLogin");
-      if(this.$websocket) {
+      if (this.$websocket) {
         this.$websocket.close();
       }
     }
@@ -49,9 +60,9 @@ export const checkMixin = {
   },
   methods: {
     checkAuth() {
-      if(this.ifLogin) {
+      if (this.ifLogin) {
         return true;
-      }else {
+      } else {
         this.$router.push("/login");
         return false;
       }
