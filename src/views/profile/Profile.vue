@@ -22,7 +22,7 @@
               <span class="profile-type">
                 {{ userInfo.type === 1 ? "管理员" : "普通用户" }}
               </span>
-              <div class="modify-account">
+              <div class="modify-account" v-if="isHimself">
                 <el-button size="small" type="primary" @click="changePassword"
                   ><i class="fa fa-pencil-square-o" aria-hidden="true"></i
                   >修改密码</el-button
@@ -305,6 +305,7 @@ export default {
       const _this = this;
       follow(this.userInfo.id).then((res) => {
         if (res.code === 200) {
+          _this.initData();
           _this.hasFollowed = true;
           console.log("aaa");
           _this.$message.success("关注成功！");
@@ -318,6 +319,7 @@ export default {
       const _this = this;
       unFollow(this.userInfo.id).then((res) => {
         if (res.code === 200) {
+          _this.initData();
           _this.hasFollowed = false;
           _this.$message.success("取关成功！");
         } else {

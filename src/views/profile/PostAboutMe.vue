@@ -6,7 +6,7 @@
         <div class="post-tag">{{ item.post.tag }}</div>
         <div class="post-date">{{ item.post.createTime }}</div>
       </div>
-      <div class="post-content">{{ item.post.content }}</div>
+      <div class="post-content" v-html="item.post.content "></div>
     </div>
     <div class="like-count">
       <i class="fa fa-heart-o"></i>{{ item.likeCount }}

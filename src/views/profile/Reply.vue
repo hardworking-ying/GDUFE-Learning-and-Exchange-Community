@@ -6,8 +6,8 @@
         > 帖子:{{ item.post.title }} {{ item.comment.entityType===1? "":"的评论" }}</router-link
       >
     </div>
-    <div class="reply-content">
-      回复: {{ item.comment.content }}
+    <div class="reply-content" v-html="item.comment.content">
+      <!-- 回复: {{ item.comment.content }} -->
     </div>
     <div class="reply-time"> {{ item.comment.createTime }}</div>
   </div>

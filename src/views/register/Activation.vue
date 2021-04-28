@@ -6,7 +6,9 @@
         :sm="{ span: 22, offset: 1 }"
         :md="{ span: 20, offset: 2 }"
       >
-        {{ "激活成功，" + num + "秒内将跳转到登录页面" }}
+        <div class="container tip">
+          {{ "激活成功，" + num + "秒内将跳转到登录页面" }}
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -21,7 +23,7 @@ export default {
   props: {},
   data() {
     return {
-      num: 5
+      num: 3
     };
   },
   watch: {},
@@ -64,4 +66,9 @@ export default {
   }
 };
 </script>
-<style scoped></style>
+<style scoped>
+.tip {
+  color: teal;
+  font-size: 22px;
+}
+</style>

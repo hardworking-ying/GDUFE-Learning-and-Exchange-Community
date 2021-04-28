@@ -37,8 +37,8 @@ export default {
   },
   methods: {
     initWebsocket(userId) {
-      this.$websocket = new WebSocket("ws://192.168.43.77:8080/community/websocket/" + userId);
-      // this.$websocket = new WebSocket("ws://localhost:8080/community/websocket/" + userId);
+      // this.$websocket = new WebSocket("ws://192.168.43.77:8080/community/websocket/" + userId);
+      this.$websocket = new WebSocket("ws://localhost:8080/community/websocket/" + userId);
       this.$websocket.onopen = this.websocketonopen;
       this.$websocket.onerror = this.websocketonerror;
       this.$websocket.onmessage = this.websocketonmessage;
@@ -64,8 +64,11 @@ export default {
       console.log("websocket 连接关闭");
     },
     getMsgList() {
+      const _this = this;
       getMessageList().then(res => {
-        console.log("消息", res);
+        if(res.data.length > 0) {
+          _this.$store.commit("setHasMsg", {hasMsg: true})
+        }
       })
     }
   },
@@ -155,5 +158,9 @@ a {
 .el-backtop {
   background-color: @primary !important;
   color: #fff !important;
+}
+em {
+  font-weight: bold;
+  color: red!important;
 }
 </style>

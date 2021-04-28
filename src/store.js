@@ -13,8 +13,8 @@ export default new Vuex.Store({
       headerUrl: "",
       createTime: "",
     },
-    // baseURL: "http://localhost:8080",
-    baseURL: "http://192.168.43.77:8080",
+    baseURL: "http://localhost:8080",
+    // baseURL: "http://192.168.43.77:8080",
     // baseURL: "http://10.101.188.98:8080/community",
     hasMsg: false
   },

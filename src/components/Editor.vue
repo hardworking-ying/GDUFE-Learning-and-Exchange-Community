@@ -158,6 +158,9 @@ export default {
         } else if (this.editInfo.content === "") {
           this.$message.error("帖子内容不能为空！");
           return;
+        } else if(this.editInfo.tagsId === 5 && this.$store.state.user.type === 0) {
+          this.$message.error("您不是管理员，没有权限发布公告！");
+          return;
         }
         this.$emit("releasePost", this.editInfo);
         this.$emit("closeEditor");

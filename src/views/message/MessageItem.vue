@@ -3,12 +3,12 @@
     <router-link :to="'/detail/' + message.discussPostId" class="message-content">
       {{ message.operatorName }}{{ message.operation }}了你的{{ message.type }}。
     </router-link>
-    <div class="message-operate">
+    <!-- <div class="message-operate">
       <span v-if="message.status === 0" class="message-status">未读</span>
       <span @click="delMessage" class="operate" v-else>
         <i class="fa fa-trash-o" alt="删除消息"></i>
       </span>
-    </div>
+    </div> -->
   </div>
 </template>
 
